@@ -1,8 +1,8 @@
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { LoginForm } from "../components/LoginForm";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGithub, faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub, faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 export const LoginPage = function () {
   return (
@@ -21,17 +21,20 @@ export const LoginPage = function () {
             Don&apos;t have an account? Sign up for free
           </span>
 
+          <a href="http://localhost:3000/auth/github">
           <button className="w-full text-white bg-neutral-700 hover:bg-neutral-600 border border-neutral-400 rounded-xl py-3 px-4 mb-4 text-md">
-          <FontAwesomeIcon icon={faGithub} className="mr-2" />
+            <FontAwesomeIcon icon={faGithub} className="mr-2" />
             Continue with GitHub
           </button>
+          </a>
 
-          <button className="w-full text-white bg-neutral-700 hover:bg-neutral-600 border border-neutral-400 rounded-xl py-3 px-4 mb-6 text-md">
-          <FontAwesomeIcon icon={faGoogle} className="mr-2" />
-            Continue with Google
-          </button>
+          <a href="http://localhost:3000/auth/google">
+            <button className="w-full text-white bg-neutral-700 hover:bg-neutral-600 border border-neutral-400 rounded-xl py-3 px-4 mb-6 text-md">
+              <FontAwesomeIcon icon={faGoogle} className="mr-2" />
+              Continue with Google
+            </button>
+          </a>
 
-          
           <div className="flex items-center justify-center my-2 w-full">
             <hr className="flex-grow border-neutral-600" />
             <span className="text-gray-400 px-4 whitespace-nowrap">
