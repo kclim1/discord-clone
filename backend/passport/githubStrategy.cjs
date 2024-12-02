@@ -15,7 +15,7 @@ const githubStrategy = ()=>{
             let email = null
             const fetchEmail = await axios.get('https://api.github.com/user/emails', {
                 headers: {
-                  'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`, 
+                  'Authorization': `Bearer ${accessToken}`, 
                   'User-Agent': 'discord-clone'
                 }
               })
