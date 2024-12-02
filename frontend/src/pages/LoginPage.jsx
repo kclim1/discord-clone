@@ -18,7 +18,7 @@ export const LoginPage = function () {
           </h1>
 
           <span className="text-gray-400 mb-6 block text-center">
-            Don&apos;t have an account? Sign up for free
+            Don&apos;t have an account? <a className="text-[#7770d6] hover:text-[#b8b3f5]" href="/signup"> Sign up for free</a>
           </span>
 
           <a href="http://localhost:3000/auth/github">
