@@ -32,8 +32,15 @@ router.get(
       // Successful authentication, redirect home.
       res.send('github login succesful')
     });
-
-
     //github routes end
+
+    //local auth starts 
+    router.post('/login', 
+      passport.authenticate('local', { failureRedirect: '/login' }),
+      function(req, res) {
+        res.send('local auth successful');
+      });
+
+
 
 module.exports = router 
