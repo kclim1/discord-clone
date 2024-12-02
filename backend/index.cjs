@@ -28,7 +28,7 @@ mongooseConnect();
 
 //cors moved to corsConfig.js
 app.use(cors);
-
+app.use(express.json());
 // Passport serialization and deserialization
 serializeUser();
 deserializeUser();
