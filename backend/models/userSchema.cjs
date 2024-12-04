@@ -9,11 +9,9 @@ const UserSchema = new mongoose.Schema({
     },
     email:{
         type:String,
-        unique:true,
-        required:false
     },
     profileId:{
-        type:Number,
+        type:String,
         unique:true,
     },
     loginTime:{
