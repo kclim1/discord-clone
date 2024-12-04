@@ -9,15 +9,21 @@ export const SignupForm = function () {
     const [username , setUsername ] = useState('')
     const [password , setPassword ] = useState('')
     // const [error,setError] = useState(null)
-
+    
+    const handleUsernameInput = (event)=>{
+      setUsername(event.target.value)
+    }
+    const handlePasswordInput = (event)=>{
+    setPassword(event.target.value)
+  }
+    
     const handleSignup = async (event)=>{
-        event.preventDefault()
-
+      event.preventDefault()
         try{
             const response = await axios.post('http://localhost:3000/signup',{username,password})
-            if(response.status === 200){
+            if(response.status === 201){
                 console.log('signup successful')
-                navigate('/login')
+                navigate('/dashboard')
             }else{
                 // setError('signup fail')
                 console.log('signup fail')
@@ -43,7 +49,7 @@ export const SignupForm = function () {
             type="text"
             id="username"
             value={username}
-            onChange={(event)=>setUsername(event.target.value)}
+            onChange={handleUsernameInput}
             className="w-full p-3 border border-neutral-600 rounded bg-neutral-900 text-white focus:border-[#7770d6] focus:outline-none focus:ring focus:ring-[#7770d6]"
             placeholder="Enter your username"
           />
@@ -59,7 +65,7 @@ export const SignupForm = function () {
             type="password"
             id="password"
             value={password}
-            onChange={(event)=>setPassword(event.target.value)}
+            onChange={handlePasswordInput}
             className="w-full p-3 border border-neutral-600 rounded bg-neutral-900 text-white focus:border-[#7770d6] focus:outline-none focus:ring focus:ring-[#7770d6]"
             placeholder="Enter your password"
           />
