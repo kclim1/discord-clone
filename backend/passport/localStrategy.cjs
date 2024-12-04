@@ -8,6 +8,7 @@ const bcryptjs = require('bcryptjs')
     async function(username,password,done){
         try{
             const localUser = await User.findOne({username : username })
+            
             if(!localUser){
                 console.log('please login again')
                 return done(null,false)
