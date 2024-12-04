@@ -19,6 +19,7 @@ const serializeUser = require("./passport/serializeUser.cjs");
 const deserializeUser = require("./passport/deserializeUser.cjs");
 const cors = require("./middleware/corsConfig.cjs");
 const googleStrategy = require("./passport/googleStrategy.cjs");
+const localStrategy = require('./passport/localStrategy.cjs')
 const githubStrategy = require("./passport/githubStrategy.cjs");
 const authRoutes = require('./routes/authRoutes.cjs')
 
@@ -41,6 +42,7 @@ app.use(sessionMiddleware);
 googleStrategy()
 //google strat moved to googleStrategy.js
 githubStrategy()
+localStrategy()
 //routes moved to auth routes
 app.use(authRoutes)
 
