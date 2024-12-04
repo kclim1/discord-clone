@@ -1,6 +1,7 @@
 const express = require('express')
 const passport = require('passport')
 const router = express.Router()
+const mainController = require('../controllers/mainController.cjs')
 
 //google routes start 
 router.get(
@@ -11,7 +12,7 @@ router.get(
     "/auth/google/callback",
     passport.authenticate("google", { failureRedirect: "/login" }),
     function (req, res) {
-      console.log("login succesful");
+      console.log("google login succesful");
       res.send("google login succesful");
     //   res.redirect('http://localhost:5173/');
     }
@@ -35,12 +36,20 @@ router.get(
     //github routes end
 
     //local auth starts 
-    router.post('/login', 
-      passport.authenticate('local', { failureRedirect: '/login' }),
-      function(req, res) {
-        res.send('local auth successful');
-      });
+   
 
+    router.post('/login', 
+      passport.authenticate('local', { failureRedirect: '/login' }),  // If authentication fails, redirect to /login
+      (req, res) => {
+        // This callback is triggered when authentication succeeds
+        return res.status(201).json({ message: 'Local login successful' });
+      }
+    );
+    
+
+
+
+    router.post('/signup',mainController.signup)
 
 
 module.exports = router 
