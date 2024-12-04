@@ -1,21 +1,21 @@
-import {useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
-//conditionally render errors in signup and login form 
+// conditionally render errors in signup and login form
 
 export const SignupForm = function () {
     const navigate = useNavigate()
     const [username , setUsername ] = useState('')
     const [password , setPassword ] = useState('')
-    // const [error,setError] = useState(null)
+    const [error,setError] = useState([])
     
     const handleUsernameInput = (event)=>{
       setUsername(event.target.value)
     }
     const handlePasswordInput = (event)=>{
-    setPassword(event.target.value)
-  }
+      setPassword(event.target.value)
+    }
     
     const handleSignup = async (event)=>{
       event.preventDefault()
@@ -30,11 +30,13 @@ export const SignupForm = function () {
             }
 
         }catch(error){
-            console.error(error)
+          if (error.response && error.response.status === 400){
+            setError(error.response.data.errors)
             console.log('error signing up')
-        }
-    }
+          }
+        }  // <- Closing brace for the catch block
     
+    }
 
     return (
       <form onSubmit={handleSignup}>
@@ -70,6 +72,15 @@ export const SignupForm = function () {
             placeholder="Enter your password"
           />
         </div>
+        {error.length > 0 && (
+          <div className="error-messages text-center pb-4">
+            {error.map((err, index) => (
+              <p key={index} style={{ color: 'red' }}>
+                {err.msg} 
+              </p>
+            ))}
+          </div>
+        )}
         <button
           type="submit"
           className="w-full py-3 px-4 bg-[#7770d6] hover:bg-[#b8b3f5] text-white font-bold rounded-xl transition duration-200 pt-2 "
@@ -78,7 +89,4 @@ export const SignupForm = function () {
         </button>
       </form>
     );
-  };
-  
-  
-  
+};
