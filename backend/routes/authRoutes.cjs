@@ -2,6 +2,8 @@ const express = require('express')
 const passport = require('passport')
 const router = express.Router()
 const mainController = require('../controllers/mainController.cjs')
+const { formValidator } = require('../validators/formvalidator')
+
 
 //google routes start 
 router.get(
@@ -49,7 +51,7 @@ router.get(
 
 
 
-    router.post('/signup',mainController.signup)
+    router.post('/signup',formValidator,mainController.signup)
 
 
 module.exports = router 

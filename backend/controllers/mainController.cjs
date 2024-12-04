@@ -1,8 +1,16 @@
 const User = require("../models/userSchema.cjs");
 const bcryptjs = require("bcryptjs");
 const mongoose = require("mongoose");
+const formValidator = require('../validators/formvalidator')
+const { validationResult } = require('express-validator')
+
 
 exports.signup = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const { username, password , email } = req.body;
     const existingUser = await User.findOne({ username });
