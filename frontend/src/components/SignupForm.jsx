@@ -2,13 +2,12 @@ import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-// conditionally render errors in signup and login form
 
 export const SignupForm = function () {
     const navigate = useNavigate()
     const [username , setUsername ] = useState('')
     const [password , setPassword ] = useState('')
-    const [error,setError] = useState([])
+    const [errors,setErrors] = useState([])
     
     const handleUsernameInput = (event)=>{
       setUsername(event.target.value)
@@ -31,10 +30,10 @@ export const SignupForm = function () {
 
         }catch(error){
           if (error.response && error.response.status === 400){
-            setError(error.response.data.errors)
+            setErrors(error.response.data.errors)
             console.log('error signing up')
           }
-        }  // <- Closing brace for the catch block
+        }  
     
     }
 
@@ -72,11 +71,11 @@ export const SignupForm = function () {
             placeholder="Enter your password"
           />
         </div>
-        {error.length > 0 && (
+        {errors.length > 0 && (
           <div className="error-messages text-center pb-4">
-            {error.map((err, index) => (
+            {errors.map((error, index) => (
               <p key={index} style={{ color: 'red' }}>
-                {err.msg} 
+                {error.msg} 
               </p>
             ))}
           </div>
