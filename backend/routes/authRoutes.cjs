@@ -40,17 +40,16 @@ router.get(
     //local auth starts 
    
 
-    router.post('/login', 
-      passport.authenticate('local', { failureRedirect: '/login' }),  // If authentication fails, redirect to /login
+    router.post('/login',
+      passport.authenticate('local', { failureRedirect: false }), // Prevent automatic redirection on failure
       (req, res) => {
-        // This callback is triggered when authentication succeeds
         return res.status(201).json({ message: 'Local login successful' });
+      },
+      (err, req, res, next) => {
+        return res.status(401).json({ message: 'Login failed' });
       }
-    );
+    )
     
-
-
-
     router.post('/signup',formValidator,mainController.signup)
 
 
