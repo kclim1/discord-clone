@@ -3,6 +3,7 @@ const bcryptjs = require("bcryptjs");
 const mongoose = require("mongoose");
 const formValidator = require('../validators/formvalidator')
 const { validationResult } = require('express-validator')
+const cloudinary = require('../middleware/cloudinary.cjs')
 
 
 exports.signup = async (req, res) => {
@@ -43,5 +44,36 @@ exports.signup = async (req, res) => {
   }
 };
 
+
+
+exports.updateProfile = async (req,res)=>{
+  try{
+    const {username , email , profilePic} = req.body
+    const profileId = req.user.id 
+  }catch(error){
+    console.error('failed to update profile' , error )
+  }
+}
+
+
+exports.logout = (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      console.error('Error during logout:', err);
+      return next(err);
+    }
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        return next(err);
+      }
+      console.log("req body" , req.body)
+      res.clearCookie('connect.sid'); 
+      console.log('Successful logout');
+      res.status(200).json({message: "logout succesful"})
+    });
+  });
+};
 
 
