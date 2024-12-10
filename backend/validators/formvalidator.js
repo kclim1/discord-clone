@@ -7,15 +7,12 @@ export const formValidator = [
     body('password')
       .isLength({ min: 8 })
       .withMessage('Password must be at least 8 characters long'),
-    // body('email')
-    //   .isEmail()
-    //   .withMessage('Please provide a valid email address'),
-    // body('firstName')
-    //   .notEmpty()
-    //   .withMessage('First Name is required'),
-    // body('lastName')
-    //   .notEmpty()
-    //   .withMessage('Last Name is required')
+    body('firstName')
+      .notEmpty()
+      .withMessage('First Name is required'),
+    body('lastName')
+      .notEmpty()
+      .withMessage('Last Name is required')
   ]
 
   
