@@ -13,7 +13,7 @@ exports.signup = async (req, res) => {
   }
 
   try {
-    const { username, password , email } = req.body;
+    const { username, password , firstName , lastName } = req.body;
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       console.log("User already exists. Please log in.");
@@ -26,7 +26,8 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcryptjs.hash(password, salt);
     const objectId = new mongoose.Types.ObjectId().toString();
     const user = {
-      email: email,
+      firstName : firstName,
+      lastName : lastName , 
       username: username,
       password: hashedPassword,
       profileId : objectId
