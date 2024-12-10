@@ -9,7 +9,7 @@ export const LoginForm = function () {
   const setSnackbar = useSnackbarStore((state) => state.setSnackbar)
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState([]); // changed 'errors' to 'error'
+  const [error, setError] = useState(null); 
 
   const handleUsername = (event) => {
     setUsername(event.target.value);
@@ -25,7 +25,7 @@ export const LoginForm = function () {
         username,
         password,
       });
-      if (response.status === 201) {
+      if (response.status === 200) {
         setSnackbar({ message: 'Welcome back!', severity: 'success' });
 
         console.log("local login success");
@@ -33,6 +33,7 @@ export const LoginForm = function () {
       }
     } catch (error) {
       if (error.response.status === 401) {
+        console.log(error)
         setError(error);
       }
     }
@@ -72,15 +73,10 @@ export const LoginForm = function () {
           placeholder="Enter your password"
         />
       </div>
-      {/* {error && 
-        <div className='text-center text-red-300 pb-4'>
-          <p>{error.message}</p>
-        </div>
-      } */}  
-      {/* where is the above error coming from ????  */}
+     
       {error && (
-        <div className="text-center text-red-300 pb-4">
-          <p>Something went wrong, please try again.</p>
+        <div className="text-center text-red-300 pb-6">
+          <p>Oops! Please try again!</p>
         </div>
       )}
       <button
