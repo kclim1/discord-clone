@@ -38,6 +38,8 @@ deserializeUser();
 
 // Set up session handling with MongoDB store
 app.use(sessionMiddleware);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Set up Google OAuth Strategy with Passport
 googleStrategy()
@@ -46,7 +48,6 @@ githubStrategy()
 localStrategy()
 //routes moved to auth routes
 app.use(authRoutes)
-
 
 
 
