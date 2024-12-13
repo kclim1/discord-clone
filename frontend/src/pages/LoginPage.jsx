@@ -1,5 +1,4 @@
-import { Footer } from "../components/Footer";
-import { Header } from "../components/Header";
+
 import { LoginForm } from "../components/LoginForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faGoogle } from "@fortawesome/free-brands-svg-icons";
@@ -7,7 +6,7 @@ import { faGithub, faGoogle } from "@fortawesome/free-brands-svg-icons";
 export const LoginPage = function () {
   return (
     <div className="bg-neutral-900 min-h-screen flex flex-col">
-      <Header />
+      
 
       {/* Main content centered */}
       <main className="flex flex-col items-center justify-center flex-grow">
@@ -47,7 +46,7 @@ export const LoginPage = function () {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 };

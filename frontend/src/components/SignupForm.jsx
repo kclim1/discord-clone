@@ -27,22 +27,20 @@ export const SignupForm = function () {
     const handleSignup = async (event)=>{
       event.preventDefault()
         try{
-            const response = await axios.post('http://localhost:3000/signup',{username,password})
+
+            const response = await axios.post('http://localhost:3000/signup',{username, password , firstName , lastName})
             if(response.status === 201){
                 console.log('signup successful')
                 navigate('/dashboard')
             }else{
-                // setError('signup fail')
                 console.log('signup fail')
             }
 
         }catch(error){
           if (error.response && error.response.status === 400){
             setErrors(error.response.data.errors)
-            console.log('error signing up')
           }
         }  
-    
     }
 
     return (
@@ -88,7 +86,7 @@ export const SignupForm = function () {
           </label>
           <input
             type="text"
-            id="username"
+            id="lastName"
             value={lastName}
             onChange={handleLastNameInput}
             className="w-full p-3 border border-neutral-600 rounded bg-neutral-900 text-white focus:border-[#7770d6] focus:outline-none focus:ring focus:ring-[#7770d6]"
@@ -120,6 +118,7 @@ export const SignupForm = function () {
             ))}
           </div>
         )}
+       
         <button
           type="submit"
           className="w-full py-3 px-4 bg-[#7770d6] hover:bg-[#b8b3f5] text-white font-bold rounded-xl transition duration-200 pt-2 "

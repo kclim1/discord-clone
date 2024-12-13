@@ -24,7 +24,7 @@ const testCloudinaryConnection = async (req,res) => {
 };
 
 // Call the test function
-testCloudinaryConnection();
+// testCloudinaryConnection();
 
 
   

@@ -1,4 +1,5 @@
 const passport = require('passport')
+const User = require('../models/userSchema.cjs')
 
  const deserializeUser = ()=>{
   passport.deserializeUser(async (id, done) => {

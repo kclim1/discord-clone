@@ -3,7 +3,7 @@ function isAuthenticated(req, res, next) {
       return next();
     }
     console.log('user not authenticated.redirected to login')
-    return res.status(401).json({message : "User not authenticated"})
+    return res.redirect('http://localhost:5173/error')
   }
 
 module.exports = isAuthenticated
