@@ -1,20 +1,25 @@
 import axios from "axios";
 import { useProfileStore } from "../store/useProfileStore";
-import { useEffect} from "react";
-import { useParams } from "react-router-dom";
 
+// Profile ID is passed down as a prop by Dashboard
+export const fetchProfile = async (profileId) => {
+  const { setUser, setLoading } = useProfileStore.getState(); // Access Zustand actions
 
-export const fetchProfile = ()=>{
-    const {username , profileId, email,profilePic} = useProfileStore()
-    const params = useParams()
-    const fetchUserData = async ()=>{
-        try{
-            
-            const fetchUserInfo = axios.get(`http://localhost:3000/user/${params}`)
-            
-        }catch(error){
-            console.error('error fetching profile data' , error)
-        }
+  try {
+    setLoading(true); 
+
+    const response = await axios.get(`http://localhost:3000/user/${profileId}`);
+    if (response.status === 200) {
+      const { username, email, profilePic } = response.data;
+      setUser({
+        username,
+        email,
+        profilePic,
+      });
     }
-
-}
+  } catch (error) {
+    console.error("Error fetching profile data:", error);
+  } finally {
+    setLoading(false); 
+  }
+};
