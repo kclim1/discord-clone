@@ -22,6 +22,7 @@ export const ServerIconWrapper = styled("div")(() => ({
     boxShadow: `0px 4px 10px 2px rgba(255, 0, 255, 0.8)`, // Intense purple shadow
     borderRadius:"50%",
      backgroundColor: "#6a0dad"
+
   },
 }));
 

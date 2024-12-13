@@ -14,7 +14,7 @@ export const ServerListSidebar = () => {
       </PurpleTooltip>
       <hr className="w-3/4 border-t-2 border-white mt-3 py-2" />
 
-      <div className="flex flex-col items-center gap-3 my-3 serverIcons overflow-y-auto max-h-[50vh] w-full scrollbar-hide "  style={{
+      <div className="flex flex-col items-center gap-3 my-3 serverIcons overflow-y-auto h-screen w-full scrollbar-hide "  style={{
     scrollbarWidth: "none", // For Firefox
     msOverflowStyle: "none", // For IE and Edge
   }}>
@@ -22,15 +22,13 @@ export const ServerListSidebar = () => {
         {/* Example Server Icon */}
         <ServerIcons/>
         <ServerIcons/>
-        <ServerIcons/>
-        <ServerIcons/>
-        <ServerIcons/>
+        
         
         {/* Add more server icons dynamically here */}
       </div>
       <ServerIconTooltip title="Add a server"  placement="right">
         <ServerIconWrapper>
-          <AddCircleIcon style={{ fontSize: "48px" }} />
+          <AddCircleIcon style={{ fontSize: "48px" , marginBottom: "32px"}} />
         </ServerIconWrapper>
       </ServerIconTooltip>
     </div>

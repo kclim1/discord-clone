@@ -79,13 +79,15 @@ exports.logout = (req, res, next) => {
 
 exports.getProfile = async (req,res)=>{
   try{
-    const profileId = req.body.profileId
-    const profile = User.findOne({profileId})
+    const profileId = req.params.profileId
+    const profile = await User.findOne({profileId})
     if(profile){
-      console.log('user found via profile id ' , profile)
+       console.log('user found via profile id ' , profile)
+      res.json(profile)
       
     }
-    console.log('user not found via profile id ')
+    res.status(400).json({message:'profile not found'})
+
   }catch(error){
     console.error(error)
   }

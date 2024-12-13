@@ -10,7 +10,7 @@ export const fetchProfile = ()=>{
     const fetchUserData = async ()=>{
         try{
             
-            const fetchUserInfo = axios.get(`http://localhost:3000/api/user/${params}`)
+            const fetchUserInfo = axios.get(`http://localhost:3000/user/${params}`)
             
         }catch(error){
             console.error('error fetching profile data' , error)

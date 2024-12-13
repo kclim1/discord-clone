@@ -20,7 +20,7 @@ const StyledIconContainer = styled('div')({
 
 const StyledPeopleIcon = styled(PeopleIcon)({
   color: 'white',
-  fontSize: '40px',
+  fontSize: '52px',
 });
 
 export const ServerIcons = () => {

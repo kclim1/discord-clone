@@ -10,6 +10,7 @@ export const LoginForm = function () {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null); 
+  const [loading,setLoading] = useState(false)
 
   const handleUsername = (event) => {
     setUsername(event.target.value);
@@ -21,6 +22,7 @@ export const LoginForm = function () {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
+      setLoading(true)
       const response = await axios.post("http://localhost:3000/auth/login", {
         username,
         password,
@@ -36,11 +38,16 @@ export const LoginForm = function () {
         console.log(error)
         setError(error);
       }
+    }finally{
+      setLoading(false)
     }
   };
 
   return (
     <form onSubmit={handleLogin}>
+      {/* {isLoading && (
+        ...
+      )} */}
       <div className="mb-6">
         <label
           className="block text-white text-sm font-bold mb-2 pt-2"
