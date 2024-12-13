@@ -68,8 +68,8 @@ router.get(
     // refactor later
     
     // router.get('/profile',isAuthenticated , mainController.getProfile)
-
-    router.put('dashboard/:profileid',isAuthenticated,mainController.updateProfile)
+    router.get('/api/user/:profileId',mainController.getProfile)
+    router.put('/dashboard/:profileid',isAuthenticated,mainController.updateProfile)   
     router.post('/auth/logout',mainController.logout)
 
 module.exports = router 

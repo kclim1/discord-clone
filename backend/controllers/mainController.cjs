@@ -77,6 +77,19 @@ exports.logout = (req, res, next) => {
   });
 };
 
+exports.getProfile = async (req,res)=>{
+  try{
+    const profileId = req.body.profileId
+    const profile = User.findOne({profileId})
+    if(profile){
+      console.log('user found via profile id ' , profile)
+      
+    }
+    console.log('user not found via profile id ')
+  }catch(error){
+    console.error(error)
+  }
+}
 
 
 
