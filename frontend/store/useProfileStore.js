@@ -10,7 +10,10 @@ export const useProfileStore = create((set) => ({
       profilePic: '', 
     },
     loading : true,
-    setUser: (newUserData) => set({ user: { ...newUserData } }),
+    setUser: (newUserData) =>
+      set((state) => ({
+        user: { ...state.user, ...newUserData },
+      })),    
     setLoading : (isLoading) => set({loading:isLoading})
   }));
   
