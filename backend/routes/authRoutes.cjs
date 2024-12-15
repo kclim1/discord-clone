@@ -69,7 +69,7 @@ router.get(
     
     // router.get('/profile',isAuthenticated , mainController.getProfile)
     // /Dashboard/profilepage  => handle in frontend 
-    router.get('/user/:profileId',isAuthenticated,mainController.getProfile)
+    router.get('/user/:profileId',mainController.getProfile)
     router.put('/dashboard/:profileid',isAuthenticated,mainController.updateProfile)   
     router.post('/auth/logout',mainController.logout)
 
