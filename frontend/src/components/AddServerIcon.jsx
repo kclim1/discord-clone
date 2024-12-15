@@ -10,6 +10,7 @@ export const ServerIconTooltip = styled(({ className, ...props }) => (
     color: "#fff", // White text
     boxShadow: theme.shadows[1],
     fontSize: "1rem", 
+    
   },
 }));
 
@@ -17,6 +18,7 @@ export const ServerIconTooltip = styled(({ className, ...props }) => (
 export const ServerIconWrapper = styled("div")(() => ({
   display: "inline-block",
   transition: "transform 0.3s ease, box-shadow 0.3s ease",
+//   backgroundColor:"whitesmoke",
   "&:hover": {
     transform: "scale(1.2)", // Slightly enlarge the icon
     boxShadow: `0px 4px 10px 2px rgba(255, 0, 255, 0.8)`, // Intense purple shadow
