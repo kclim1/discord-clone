@@ -5,7 +5,7 @@ import { Dashboard } from "../src/pages/Dashboard";
 import { App } from "../src/pages/Homepage";
 import { ProfilePage } from "../src/pages/ProfilePage";
 import { ErrorPage } from "../src/pages/ErrorPage";
-
+// import { NewDashboard } from "../src/pages/NewDashboard";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -22,9 +22,9 @@ const router = createBrowserRouter([
   },
   { path: "/signup", element: <SignupPage /> },
   {
-    path: "/dashboard",
+    path: "/dashboard/:profileId",
     element: <Dashboard />,
-    children: [{ path: "/dashboard/profile", element: <ProfilePage /> }],
+    children: [{ path: "profile", element: <ProfilePage /> }],
   },
 ]);
 
