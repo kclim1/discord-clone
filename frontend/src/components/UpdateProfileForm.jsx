@@ -1,31 +1,56 @@
 // VERSION 1 FORM
+import { useProfileStore } from "../../store/useProfileStore";
 
 export const UpdateProfileForm = () => {
+    const {user ,setUser } = useProfileStore()
+    
+    const handleUsername = (event)=>{
+        const { name, value } = event.target;
+        setUser({[name]:value})
+    }
+    const handleEmail = (event)=>{
+        const { name, value } = event.target;
+        setUser({[name]:value})
+    }
+    const handlePassword = (event)=>{
+        const { name, value } = event.target;
+        setUser({[name]:value})
+    }
+
   return (
-    <form className="max-w-lg mx-auto p-6 bg-red-300 rounded-lg shadow-md">
+    <form className="max-w-lg mx-auto p-6 bg-[#202225] rounded-lg shadow-md">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col">
           <label className="font-bold mb-1">Username:</label>
           <input
-            className="p-2 border border-gray-400 rounded"
+            className="p-2 border border-[#7770d6] bg-[#2f3136] text-[#B9BBBE] rounded focus:border-[#5b56a6] focus:ring-2 focus:ring-[#5b56a6]"
             type="text"
             placeholder="Enter your username"
+            value={user.username}
+            name="username"
+            onChange={handleUsername}
           />
         </div>
         <div className="flex flex-col">
           <label className="font-bold mb-1">Email:</label>
           <input
-            className="p-2 border border-gray-400 rounded"
+            className="p-2 border border-[#7770d6] bg-[#2f3136] text-[#B9BBBE] rounded focus:border-[#5b56a6] focus:ring-2 focus:ring-[#5b56a6]"
             type="email"
             placeholder="Enter your email"
+            value={user.email}
+            name="email"
+            onChange={handleEmail}
           />
         </div>
         <div className="flex flex-col">
           <label className="font-bold mb-1">Password:</label>
           <input
-            className="p-2 border border-gray-400 rounded"
+            className="p-2 border border-[#7770d6] bg-[#2f3136]  text-[#B9BBBE] rounded focus:border-[#5b56a6] focus:ring-2 focus:ring-[#5b56a6]"
             type="password"
-            placeholder="Enter your password"
+            placeholder="Enter new password"
+            value={user.password}
+            name="password"
+            onChange={handlePassword}
           />
         </div>
         <div className="flex flex-col">
@@ -33,18 +58,17 @@ export const UpdateProfileForm = () => {
           <input
             type="text"
             id="profileId"
-            // value={profileId} // fetched from the database or Zustand store
+            value={user.profileId} 
             readOnly
-            className="w-full p-3 border border-neutral-600 rounded bg-neutral-700 text-white focus:outline-none"
-            placeholder="123456789"
+            className="w-full p-3 border border-neutral-600 rounded bg-neutral-700 text-grey focus:outline-none"
+            
           />
-         
         </div>
         <button
-          className="mt-4 p-3 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+          className="mt-4 p-3 bg-[#5865F2] text-white rounded hover:bg-[#6978F5] transition"
           type="submit"
         >
-          Save
+          Update Profile
         </button>
       </div>
     </form>
