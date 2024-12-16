@@ -1,10 +1,9 @@
 const User = require("../models/userSchema.cjs");
 const bcryptjs = require("bcryptjs");
 const mongoose = require("mongoose");
-const formValidator = require('../validators/formvalidator')
-const { validationResult } = require('express-validator')
-const cloudinary = require('../middleware/cloudinary.cjs')
-
+const formValidator = require("../validators/formvalidator");
+const { validationResult } = require("express-validator");
+const cloudinary = require("../middleware/cloudinary.cjs");
 
 exports.signup = async (req, res) => {
   const errors = validationResult(req);
@@ -13,7 +12,7 @@ exports.signup = async (req, res) => {
   }
 
   try {
-    const { username, password , firstName , lastName } = req.body;
+    const { username, password, firstName, lastName } = req.body;
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       console.log("User already exists. Please log in.");
@@ -26,72 +25,83 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcryptjs.hash(password, salt);
     const objectId = new mongoose.Types.ObjectId().toString();
     const user = {
-      firstName : firstName,
-      lastName : lastName , 
+      firstName: firstName,
+      lastName: lastName,
       username: username,
       password: hashedPassword,
-      profileId : objectId
+      profileId: objectId,
     };
-    await User.create(user);
-    console.log("Signup success");
-    return res.status(201).json({ message: "Signup successful" });
+    const createdUser = await User.create(user);
+
+    return res.status(201).json({ user: createdUser });
   } catch (error) {
     console.error(error);
     console.log("Signup failed");
-    // Sending error response to the client
     return res
       .status(500)
       .json({ message: "Signup failed. Please try again." });
   }
 };
 
+exports.updateProfile = async (req, res) => {
+  try {
+    const { username, email, profilePic, profileId, password } = req.body;
+    const updateData = { username, email, profilePic };
 
+    if (password) {
+      const salt = await bcryptjs.genSalt(10);
+      const hashedPassword = await bcryptjs.hash(password, salt);
+      updateData.password = hashedPassword; // Add hashed password to the update object
+    }
 
-exports.updateProfile = async (req,res)=>{
-  try{
-    const {username , email , profilePic} = req.body
-    const profileId = req.user.id 
-  }catch(error){
-    console.error('failed to update profile' , error )
+    // Find and update the user
+    const updatedUser = await User.findOneAndUpdate(
+      { profileId }, // Query by profileId
+      updateData, // Dynamically update only provided fields
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(updatedUser);
+    console.log("update complete");
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ message: "Failed to update profile" });
   }
-}
-
+};
 
 exports.logout = (req, res, next) => {
   req.logout((err) => {
     if (err) {
-      console.error('Error during logout:', err);
+      console.error("Error during logout:", err);
       return next(err);
     }
 
     req.session.destroy((err) => {
       if (err) {
-        console.error('Error destroying session:', err);
+        console.error("Error destroying session:", err);
         return next(err);
       }
-      console.log("req body" , req.body)
-      res.clearCookie('connect.sid'); 
-      console.log('Successful logout');
-      res.status(200).json({message: "logout succesful"})
+      console.log("req body", req.body);
+      res.clearCookie("connect.sid");
+      console.log("Successful logout");
+      res.status(200).json({ message: "logout succesful" });
     });
   });
 };
 
-exports.getProfile = async (req,res)=>{
-  try{
-    const profileId = req.params.profileId
-    const profile = await User.findOne({profileId})
-    if(profile){
-       console.log('user found via profile id ' , profile)
-      res.json(profile)
-      
+exports.getProfile = async (req, res) => {
+  try {
+    const profileId = req.params.profileId;
+    const profile = await User.findOne({ profileId });
+    if (profile) {
+      console.log("user found via profile id ", profile);
+      return res.json(profile);
     }
-    res.status(400).json({message:'profile not found'})
-
-  }catch(error){
-    console.error(error)
+    return res.status(400).json({ message: "profile not found" });
+  } catch (error) {
+    console.error(error);
   }
-}
-
-
-
+};
