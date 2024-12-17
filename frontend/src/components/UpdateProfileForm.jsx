@@ -1,6 +1,7 @@
 // VERSION 1 FORM
 import { useProfileStore } from "../../store/useProfileStore";
-
+import axios from "axios";
+import { showErrorToast, showSuccessToast   } from "../../utils/toastUtil";
 export const UpdateProfileForm = () => {
     const {user ,setUser } = useProfileStore()
     
@@ -16,9 +17,31 @@ export const UpdateProfileForm = () => {
         const { name, value } = event.target;
         setUser({[name]:value})
     }
+    const handleSubmit = async (event) => {
+      console.log('profileId is :' , user.profileId)
+      event.preventDefault()
+      try {
+        // Destructure the `user` object and send the relevant fields to the backend
+        const { username, email, profilePic ,password , profileId } = user;
+    
+        // Send a PUT request to update the user's profile
+        const response = await axios.put(
+          `http://localhost:3000/dashboard/${user.profileId}`,
+          { username, email, password, profilePic , profileId} 
+        );
+        console.log('response',response)
+        if(response.status === 200){
+          showSuccessToast("Profile successfully updated!");
+
+        }
+      } catch (error) {
+        showErrorToast("Oops! Failed to update profile :(");
+        console.error('Error updating profile:', error);
+      }
+    };
 
   return (
-    <form className="max-w-lg mx-auto p-6 bg-[#202225] rounded-lg shadow-md">
+    <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-6 bg-[#202225] rounded-lg shadow-md">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col">
           <label className="font-bold mb-1">Username:</label>
