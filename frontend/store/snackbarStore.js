@@ -6,7 +6,6 @@ import { create } from 'zustand';
   message: '',
   severity: 'info',
 
-  // Function to set the Snackbar state
   setSnackbar: ({ message, severity }) =>
     set(() => ({
       open: true,
