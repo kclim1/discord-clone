@@ -12,12 +12,12 @@ export const InputWithEmoji = () => {
   return (
     <div className="relative flex flex-col gap-4 m-4">
       {/* Input Container */}
-      <div className="flex items-center bg-[#40444b] rounded-lg focus-within:ring-2 focus-within:ring-[#5865F2] mx-4 mb-3 mt-2">
-        {/* Input Field */}
+      <div className="flex bg-[#40444b] rounded-lg focus-within:ring-2 focus-within:ring-[#5865F2] mx-4 mb-3 mt-2">
+      {/* Input Field */}
         <textarea
-          className="flex-1 p-3 text-[#b9bbbe] bg-transparent outline-none resize-none rounded-md h-12 leading-[1.5] scrollbar-thin scrollbar-thumb-[#2c2f33] scrollbar-track-transparent placeholder-[#72767d]"
+          className="flex-1 p-3 text-[#b9bbbe] bg-transparent outline-none resize-none rounded-md h-12 max-h-48 overflow-y-auto leading-[1.5] scrollbar-thin scrollbar-thumb-[#2c2f33] scrollbar-track-transparent placeholder-[#72767d]"
           placeholder="Send a message..."
-          rows="1" // Adjusts height dynamically
+          rows="1"
         />
 
         {/* Emoji Icon */}
@@ -34,7 +34,6 @@ export const InputWithEmoji = () => {
           <EmojiPicker theme="dark" />
         </div>
       )}
-      
     </div>
   );
 };
