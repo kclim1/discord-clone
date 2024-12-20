@@ -30,6 +30,8 @@ exports.signup = async (req, res) => {
       username: username,
       password: hashedPassword,
       profileId: objectId,
+      friends : [],
+      isOnline : false
     };
     const createdUser = await User.create(user);
 
@@ -103,5 +105,59 @@ exports.getProfile = async (req, res) => {
     return res.status(400).json({ message: "profile not found" });
   } catch (error) {
     console.error(error);
+  }
+};
+
+
+exports.checkSession = (req, res) => {
+  if (req.isAuthenticated()) {
+    res.status(200).json({
+      isAuthenticated: true,
+      user: req.user,
+    });
+  } else {
+    res.status(401).json({
+      isAuthenticated: false,
+      message: 'User is not authenticated',
+    });
+  }
+};
+
+
+exports.friendRequest = async (req, res) => {
+  const { profileId } = req.body; // ID of the friend to add
+  const senderId = req.user.profileId; // Assume authenticated user
+
+  try {
+    // Check if recipient exists
+    const recipient = await User.findOne({ profileId });
+    if (!recipient) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if a request already exists
+    const alreadyRequested = recipient.friends.some(
+      (friend) => friend.friendId === senderId && friend.status === "pending"
+    );
+    if (alreadyRequested) {
+      return res.status(400).json({ message: "Friend request already sent." });
+    }
+
+    // Add friend request to recipient
+    await User.updateOne(
+      { profileId },
+      { $push: { friends: { friendId: senderId, status: "pending" } } }
+    );
+
+    // Add friend request to sender
+    await User.updateOne(
+      { profileId: senderId },
+      { $push: { friends: { friendId: profileId, status: "pending" } } }
+    );
+
+    res.status(200).json({ message: "Friend request sent successfully." });
+  } catch (error) {
+    console.error("Error handling friend request:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
