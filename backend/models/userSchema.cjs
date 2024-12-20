@@ -15,6 +15,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    isOnline: {
+      type: Boolean,
+      default: false,
+    },
     loginTime: {
       type: Date,
       default: Date.now(),
@@ -32,6 +36,16 @@ const UserSchema = new mongoose.Schema(
     profilePic: {
       type: String,
     },
+    friends: [
+      {
+        friendId: { type: String, ref: "User" }, // Reference to the User model
+        status: {
+          type: String,
+          enum: ["pending", "accepted"],
+          default: "pending",
+        }, // Friend status
+      },
+    ],
   },
   { timestamps: true }
 );
