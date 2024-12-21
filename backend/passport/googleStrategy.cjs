@@ -24,6 +24,7 @@ const googleStrategy = () => {
               loginTime: Date.now(),
               friends: [],
               isOnline: false,
+              profilePic: ""
             });
 
             await googleUser.save();
