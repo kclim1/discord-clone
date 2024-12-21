@@ -31,7 +31,8 @@ exports.signup = async (req, res) => {
       password: hashedPassword,
       profileId: objectId,
       friends : [],
-      isOnline : false
+      isOnline : false,
+      profilePic: ""
     };
     const createdUser = await User.create(user);
 
