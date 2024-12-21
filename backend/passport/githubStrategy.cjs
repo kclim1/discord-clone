@@ -36,6 +36,7 @@ const githubStrategy = () => {
               email: email,
               friends: [],
               isOnline: false,
+              profilePic: ""
             });
           }
           console.log("user created via github");
