@@ -3,7 +3,6 @@ const bcryptjs = require("bcryptjs");
 const mongoose = require("mongoose");
 const formValidator = require("../validators/formvalidator");
 const { validationResult } = require("express-validator");
-const cloudinary = require("../middleware/cloudinary.cjs");
 
 exports.signup = async (req, res) => {
   const errors = validationResult(req);
