@@ -38,12 +38,15 @@ const UserSchema = new mongoose.Schema(
     },
     friends: [
       {
-        friendId: { type: String, ref: "User" }, // Reference to the User model
+        receiverId : {type: String, ref: "User"},
+        senderId: { type: String, ref: "User" },
+        username: { type: String, ref: "User" },
+        profilePic: { type: String, ref: "User" },
         status: {
           type: String,
           enum: ["pending", "accepted"],
           default: "pending",
-        }, // Friend status
+        }, 
       },
     ],
   },
