@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const groupchatSchema = new mongoose.Schema(
   {
-    serverId: { 
+    chatId : { 
       type: String,
       required: true,
       unique: true, 
