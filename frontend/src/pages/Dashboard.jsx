@@ -1,22 +1,36 @@
-import { Outlet, useLocation, useParams } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { Header } from "../components/Header";
 import { ServerListSidebar } from "../components/ServerListSidebar";
 import { UserFooter } from "../components/UserFooter";
-import { useEffect } from "react";
-import { useProfileStore } from "../../store/useProfileStore";
-import { fetchProfile } from "../../utils/fetchProfile";
 import { Toaster } from "sonner";
-import { InputWithEmoji } from "../components/InputWithEmoji";
+import { DirectMessageList } from "../components/DirectMessageList";
+import { useEffect } from "react";
+import { fetchProfile } from "../../utils/fetchProfile";
+import { useParams } from "react-router-dom";
+import { useSocketStore } from "../../store/useSocketStore";
+import { useFriendsStore } from "../../store/useFriendsStore";
 
 export const Dashboard = () => {
-  const { loading } = useProfileStore();
+  const connectSocket = useSocketStore((state) => state.connectSocket); //extracts  the connection function
+  const disconnectSocket = useSocketStore((state) => state.disconnectSocket); // extracts function to handle disocnnect
+  const {setSenderId } = useFriendsStore()
+
   const { profileId } = useParams();
-  const location = useLocation();
-  const isProfilePage = location.pathname === `/dashboard/${profileId}/profile`;
+  
+
   useEffect(() => {
     if (profileId) {
+      setSenderId(profileId)
       fetchProfile(profileId);
+      console.log("Connecting socket...");
+      connectSocket();
+
+      return () => {
+        console.log("Disconnecting socket...");
+        disconnectSocket();
+      };
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileId]);
 
   return (
@@ -27,33 +41,15 @@ export const Dashboard = () => {
         <ServerListSidebar />
         <div className="channel-container flex flex-col justify-between bg-[#2f3136]">
           <div className="text-channels bg-[#2f3136] text-white flex-grow ">
-            #text channels
+            <DirectMessageList />
+            {/* Other components like DirectMessageList */}
           </div>
           <UserFooter />
         </div>
-        <div className=" bg-[#36393f]  text-white flex flex-col flex-grow justify-between">
-          <div className="chat-container flex flex-grow  mx-8 bg-green-400">
-            {isProfilePage ? (
-              loading ? (
-                <div className="flex items-center justify-center w-full h-full">
-                  {/* Render your loading component */}
-                  <p>Loading...</p>
-                </div>
-              ) : (
-                <div className="w-full h-full">
-                  <Outlet />
-                </div>
-              )
-            ) : (
-              <div>
-                <h1>Chat Dashboard</h1>
-              </div>
-            )}
+        <div className="bg-[#36393f] text-white flex flex-col flex-grow justify-between">
+          <div className="chat-container flex flex-grow ">
+            <Outlet /> 
           </div>
-            <InputWithEmoji />
-        </div>
-        <div className="bg-[#2C2F33] w-[10%] text-white truncate">
-          Kiss me through the phone
         </div>
       </div>
     </div>
