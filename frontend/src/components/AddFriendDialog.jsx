@@ -7,29 +7,62 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import axios from "axios";
+import { showSuccessToast, showErrorToast } from "../../utils/toastUtil";
+import { useParams } from "react-router-dom";
+import { useProfileStore } from "../../store/useProfileStore";
+import { useFriendsStore } from "../../store/useFriendsStore";
 
 export const AddFriendDialog = () => {
-  const [open, setOpen] = useState(false);
-  const [addFriend, setAddFriend] = useState(""); // Input for friend profile ID
+  const { setSenderId } = useFriendsStore(); // Zustand store for sender ID
+  const { profileId } = useParams(); // Current user's profile ID from URL
+  const [open, setOpen] = useState(false); // Dialog state
+  const [receiverId, setReceiverId] = useState(""); // Input for friend's profile ID
+  const { user } = useProfileStore(); // Fetch user details from Zustand
+  const { username, profilePic } = user; // Extract username and profilePic
 
-  // Open dialog
+  // Open the dialog
   const handleOpen = () => setOpen(true);
 
-  // Close dialog and reset input
+  // Close the dialog and reset state
   const handleClose = () => {
     setOpen(false);
-    setAddFriend("");
+    setReceiverId("");
   };
 
-  // Handle input change
+  // Handle changes in the input field
   const handleChange = (event) => {
-    setAddFriend(event.target.value);
+    setReceiverId(event.target.value); // Set receiver ID to input value
   };
 
-  // Handle form submission (mock functionality for now)
-  const handleSubmit = () => {
-    console.log("Sending friend request to Profile ID:", addFriend);
-    handleClose();
+  // Handle form submission
+  const handleSubmit = async () => {
+    try {
+      const senderId = profileId; // Sender is the current user
+      setSenderId(senderId); // Update sender ID in Zustand store
+      console.log({
+        senderId,
+        receiverId,
+        username,
+        profilePic,
+      });
+      // Send friend request to backend
+      const response = await axios.post(`http://localhost:3000/friend-requests/${profileId}`, {
+        senderId, // Sender's profile ID
+        receiverId, // Receiver's profile ID from input
+        username, // Sender's username
+        profilePic, // Sender's profile picture
+      });
+      // Show a success toast if the request is successful
+      if (response.status === 200) {
+        showSuccessToast("Friend request sent!");
+      }
+    } catch (error) {
+      console.error("Error sending friend request:", error);
+      showErrorToast("Oops! Error sending friend request");
+    } finally {
+      handleClose();
+    }
   };
 
   return (
@@ -51,7 +84,7 @@ export const AddFriendDialog = () => {
             backgroundColor: "#2f3136", // Discord dark background
             color: "#ffffff", // White text
             borderRadius: "8px",
-            width: "500px", // Set width
+            width: "500px", // Set dialog width
           },
         }}
       >
@@ -68,8 +101,8 @@ export const AddFriendDialog = () => {
             fullWidth
             label="Profile ID"
             variant="outlined"
-            value={addFriend}
-            onChange={handleChange}
+            value={receiverId} // Controlled input
+            onChange={handleChange} // Handle input change
             InputProps={{
               style: {
                 color: "#ffffff", // White input text
@@ -99,7 +132,7 @@ export const AddFriendDialog = () => {
               transition: "all 0.2s ease-in-out", // Smooth transition
               "&:hover": {
                 color: "#ffffff", // White text on hover
-                backgroundColor: "#40444b", // Darker gray (Discord-like hover effect)
+                backgroundColor: "#40444b", // Darker gray hover effect
               },
             }}
           >
@@ -111,7 +144,7 @@ export const AddFriendDialog = () => {
             sx={{
               backgroundColor: "#5865f2", // Default Discord blue
               color: "#ffffff", // White text
-              textTransform: "none",
+              textTransform: "none", // No uppercase transformation
               transition: "all 0.2s ease-in-out",
               "&:hover": {
                 backgroundColor: "#4752c4", // Darker Discord blue
