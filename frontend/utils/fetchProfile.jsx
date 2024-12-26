@@ -15,7 +15,7 @@ export const fetchProfile = async (profileId) => {
         username,
         email,
         profilePic,
-        profileId
+        profileId,
       });
     }
   } catch (error) {
