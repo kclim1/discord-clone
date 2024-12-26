@@ -34,7 +34,7 @@ export const InputWithEmoji = () => {
       {/* Input Container */}
       <div className="flex bg-[#40444b] rounded-lg focus-within:ring-2 focus-within:ring-[#5865F2] mx-4 mb-3 mt-2 items-center">
         {/* Input Field */}
-        <form>
+        {/* <form> */}
           <textarea
             ref={textAreaRef}
             value={message}
@@ -46,7 +46,7 @@ export const InputWithEmoji = () => {
             placeholder="Send a message..."
             rows="1"
           />
-        </form>
+        {/* </form> */}
 
         {/* Emoji Icon */}
         <button
