@@ -1,16 +1,20 @@
 const mongoose = require("mongoose");
+const User = require('./userSchema.cjs')
 
 const MessageSchema = new mongoose.Schema(
   {
     senderId: {
-      type: String, // Storing as string
+      type: String, 
       ref: "User",
       required: true,
     },
-    receiverId: {
-      type: String, // Storing as string
-      ref: "User",
-      required: true,
+    profilePic:{
+      type:String,
+      ref:"User"
+    },
+    username:{
+      type:String,
+      ref:"User"
     },
     text: {
       type: String,
