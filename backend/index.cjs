@@ -26,7 +26,8 @@ const cors = require("./middleware/corsConfig.cjs");
 const googleStrategy = require("./passport/googleStrategy.cjs");
 const localStrategy = require("./passport/localStrategy.cjs");
 const githubStrategy = require("./passport/githubStrategy.cjs");
-const authRoutes = require("./routes/authRoutes.cjs");
+const authRoutes = require("./routes/authRoutes.cjs");  
+const messageRoutes = require('./routes/messageRoutes.cjs')
 
 // Connect mongoose
 mongooseConnect();
@@ -52,14 +53,16 @@ githubStrategy();
 localStrategy();
 //routes moved to auth routes
 app.use(authRoutes);
+app.use(messageRoutes)
 
 io.on("connection", (socket) => {
   console.log(`User has connected: ${socket.id}`);
 
-  socket.on("joinRoom", (room) => {
-    socket.join(room);
-    console.log(`User ${socket.id} joined room: ${room}`);
+  socket.on("sendMessage", ({ room, message, sender }) => {
+    console.log(`Message received in room ${room} from ${sender}: ${message}`);
+    io.to(room).emit("receiveMessage", { sender, message });
   });
+
 
   socket.on("sendMessage", ({ room, message }) => {
     console.log(`Message received in room ${room}: ${message}`);
@@ -74,3 +77,4 @@ io.on("connection", (socket) => {
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
