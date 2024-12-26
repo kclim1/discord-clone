@@ -1,21 +1,17 @@
-// import { useChatStore } from "../../../store/useChatStore";
-// import { useEffect } from "react";
-// import { useFriendListStore } from "../../store/useFriendListStore";
-
-
-export const ChatUI = () => {
-    
-    // const {friendList} = useFriendListStore()
-
+/* eslint-disable react/prop-types */
+export const ChatUI = ({ chat, onClick }) => {
   return (
-    <div>
-      <div className="flex p-2 mx-4 rounded-lg  items-center space-x-4  hover:bg-gray-600 friends">
+    <div
+      className="flex items-center p-2 mb-2 mx-2 rounded-lg cursor-pointer"
+      onClick={onClick}
+    >
+      <div className="flex items-center w-full p-2 rounded-md hover:bg-gray-600">
         <img
-          src="/avatar.png"
-          alt="Default Profile"
-          className="w-10 h-10 rounded-full"
+          className="w-10 h-10 rounded-full mx-3"
+          src={chat.serverPicture || '/avatar.png'}
+          alt={`${chat.serverName}'s profile`}
         />
-        <p className="text-base">Usernameeee</p>
+        <span className="text-white text-lg">{chat.serverName}</span>
       </div>
     </div>
   );
