@@ -14,6 +14,9 @@ const groupchatSchema = new mongoose.Schema(
     serverName: {
       type: String,
     },
+    serverPicture: {
+      type: String,
+    },
   },
   { timestamps: true } 
 );
