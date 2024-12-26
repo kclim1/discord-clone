@@ -9,18 +9,19 @@ import { fetchProfile } from "../../utils/fetchProfile";
 import { useParams } from "react-router-dom";
 import { useSocketStore } from "../../store/useSocketStore";
 import { useFriendsStore } from "../../store/useFriendsStore";
+import { fetchChat } from "../../utils/fetchChat";
+import { useFetchChatStore } from "../../store/useFetchChatStore";
 
 export const Dashboard = () => {
-  const connectSocket = useSocketStore((state) => state.connectSocket); //extracts  the connection function
-  const disconnectSocket = useSocketStore((state) => state.disconnectSocket); // extracts function to handle disocnnect
-  const {setSenderId } = useFriendsStore()
-
+  const connectSocket = useSocketStore((state) => state.connectSocket); //extracts the connection function
+  const disconnectSocket = useSocketStore((state) => state.disconnectSocket); // extracts function to handle disconnect
+  const { setSenderId } = useFriendsStore();
+  const { setChats } = useFetchChatStore(); // Zustand store to manage chat state
   const { profileId } = useParams();
-  
 
   useEffect(() => {
     if (profileId) {
-      setSenderId(profileId)
+      setSenderId(profileId);
       fetchProfile(profileId);
       console.log("Connecting socket...");
       connectSocket();
@@ -30,8 +31,23 @@ export const Dashboard = () => {
         disconnectSocket();
       };
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileId]);
+
+  useEffect(() => {
+    if (profileId) {
+      const loadChats = async () => {
+        try {
+          const chats = await fetchChat(profileId); // Fetch chats from backend
+          setChats(chats); // Update chats in Zustand store
+        } catch (error) {
+          console.error("Error fetching chats:", error.message);
+        }
+      };
+
+      loadChats();
+    }
+  }, [profileId, setChats]);
 
   return (
     <div className="header-container flex flex-col h-screen overflow-hidden">
@@ -48,7 +64,7 @@ export const Dashboard = () => {
         </div>
         <div className="bg-[#36393f] text-white flex flex-col flex-grow justify-between">
           <div className="chat-container flex flex-grow ">
-            <Outlet /> 
+            <Outlet />
           </div>
         </div>
       </div>
