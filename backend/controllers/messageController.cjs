@@ -58,6 +58,7 @@ exports.sendFriendRequest = async (req, res) => {
       status: "pending",
     });
 
+
     return res.status(200).json({ message: "Friend request sent successfully." });
   } catch (error) {
     console.error("Error sending friend request:", error.message);

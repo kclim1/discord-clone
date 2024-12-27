@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { fetchFriends } from "../../utils/fetchFriends";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -9,28 +9,31 @@ import { showSuccessToast } from "../../utils/toastUtil";
 
 export const FriendPage = () => {
   const { isConnected, addSocketHandler, removeSocketHandler } = useSocketStore();
-  const { setFriendList, friendList } = useFriendListStore(); // Global state for friend list
-  const { profileId } = useParams(); // Current user's profile ID
+  const { setFriendList, friendList } = useFriendListStore();
+  const { profileId } = useParams();
 
-  const loadFriends = async () => {
+  // Memoize loadFriends to avoid re-creating it
+  const loadFriends = useCallback(async () => {
     try {
       const fetchedFriends = await fetchFriends(profileId);
       setFriendList(Array.isArray(fetchedFriends) ? fetchedFriends : []);
     } catch (error) {
       console.error("Failed to load friends:", error);
     }
-  };
+  }, [profileId, setFriendList]);
 
+  // Fetch friends on component mount or when profileId changes
   useEffect(() => {
     if (profileId) {
       loadFriends();
     }
-  }, [profileId]);
+  }, [profileId, loadFriends]);
 
+  // Add socket handler for real-time friend request updates
   useEffect(() => {
-    const handleFriendRequest = (data) => {
+    const handleFriendRequest = () => {
       showSuccessToast("Friend request received!");
-      loadFriends(); // Re-fetch friends list on new request
+      loadFriends(); // Fetch updated friends after a new request
     };
 
     if (isConnected) {
@@ -42,27 +45,29 @@ export const FriendPage = () => {
         removeSocketHandler("friendRequestSent", handleFriendRequest);
       }
     };
-  }, [isConnected, addSocketHandler, removeSocketHandler]);
+  }, [isConnected, addSocketHandler, removeSocketHandler, loadFriends]);
 
+  // Handle accept friend request
   const handleAccept = async (friendId) => {
     try {
       await axios.patch(`http://localhost:3000/friends/${profileId}`, {
         friendId,
         status: "accepted",
       });
-      console.log(`Friend request from ${friendId} accepted.`);
+
       loadFriends(); // Re-fetch updated friends list
     } catch (error) {
       console.error("Error accepting friend request:", error);
     }
   };
 
+  // Handle reject friend request
   const handleReject = async (friendId) => {
     try {
       await axios.delete(`http://localhost:3000/friends/${profileId}`, {
         data: { friendId },
       });
-      console.log(`Friend request from ${friendId} rejected.`);
+
       loadFriends(); // Re-fetch updated friends list
     } catch (error) {
       console.error("Error rejecting friend request:", error);
@@ -73,13 +78,17 @@ export const FriendPage = () => {
     <div className="friend-page p-4 bg-[#3c3f43] text-white w-full h-full">
       <h1 className="text-2xl font-bold mb-4">Friends</h1>
 
+      {/* Pending Friend Requests */}
       <div className="friend-requests mb-8">
         <h2 className="text-xl font-semibold mb-2">Pending Friend Requests</h2>
         <ul className="space-y-4">
           {(Array.isArray(friendList) ? friendList : [])
             .filter((friend) => friend.status === "pending")
             .map((friend) => (
-              <li key={friend._id} className="flex items-center justify-between bg-[#3c3f43] p-4 rounded-lg">
+              <li
+                key={friend._id}
+                className="flex items-center justify-between bg-[#3c3f43] p-4 rounded-lg"
+              >
                 <div className="flex items-center space-x-4">
                   <img src={friend.profilePic || "/avatar.png"} alt="Profile" className="w-12 h-12 rounded-full" />
                   <span>{friend.username}</span>
@@ -100,6 +109,26 @@ export const FriendPage = () => {
                     </button>
                   </div>
                 )}
+              </li>
+            ))}
+        </ul>
+      </div>
+
+      {/* Accepted Friends */}
+      <div className="accepted-friends">
+        <h2 className="text-xl font-semibold mb-2">Accepted Friends</h2>
+        <ul className="space-y-4">
+          {(Array.isArray(friendList) ? friendList : [])
+            .filter((friend) => friend.status === "accepted")
+            .map((friend) => (
+              <li
+                key={friend._id}
+                className="flex items-center justify-between bg-[#3c3f43] p-4 rounded-lg"
+              >
+                <div className="flex items-center space-x-4">
+                  <img src={friend.profilePic || "/avatar.png"} alt="Profile" className="w-12 h-12 rounded-full" />
+                  <span>{friend.username}</span>
+                </div>
               </li>
             ))}
         </ul>
