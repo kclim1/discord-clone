@@ -53,7 +53,7 @@ app.use(messageRoutes);
 initializeSocket(server);
 
 server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Servers running on port ${port}`);
 });
 
 module.exports = { server }; // Export server if needed elsewhere
