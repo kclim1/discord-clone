@@ -6,7 +6,7 @@ import { useFriendListStore } from "../../store/useFriendListStore";
 import { useSocketStore } from "../../store/useSocketStore";
 
 export const FriendPage = () => {
-  // const {socket} = useSocketStore()
+  const { addSocketHandler, removeSocketHandler, connectSocket } = useSocketStore();
   const {setFriendList , friendList } = useFriendListStore()
   const { profileId } = useParams(); // Current user's profile ID
   const [friends, setFriends] = useState([]); // State to store friends
@@ -25,21 +25,20 @@ export const FriendPage = () => {
     loadFriends();
   }, [profileId , setFriendList]);
 
-  // useEffect(() => {
-  //   console.log('this is socket',socket)
-  //   if (socket) {
-  //     socket.on("friendRequestSent", (data) => {
-  //       console.log("Friend request received:", data);
-  //       setFriends((prev) => [...prev, data])
-  //       setFriendList((prev) => [...prev, data]);
-  //     });
+  useEffect(() => {
+    const handleFriendRequest = (data) => {
+      console.log("Friend request received:", data);
+      setFriends((prev) => [...prev, data])
+      setFriendList((prev) => [...prev, data]);
+    };
 
-  //     // Cleanup function to remove the event listener
-  //     return () => {
-  //       socket.off("friendRequestSent");
-  //     };
-  //   }
-  // }, [socket, setFriendList]);
+    addSocketHandler("friendRequestSent", handleFriendRequest);
+
+    return () => {
+      removeSocketHandler("friendRequestSent", handleFriendRequest);
+    };
+  }, [addSocketHandler, removeSocketHandler, connectSocket]);
+
 
   //used for debugging state
   useEffect(() => {

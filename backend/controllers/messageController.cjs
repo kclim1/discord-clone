@@ -1,93 +1,71 @@
 const User = require("../models/userSchema.cjs");
 const axios = require("axios");
-const Solochat = require("../models/soloChatSchema.cjs");
+const { getSocketInstance } = require("../socket.cjs");
 const crypto = require("crypto");
-const { io } = require("../socket.cjs"); // Import io from socket.js
-
-// this saves sender's username profileId and profilePic inside recipient's friends array.
-// also saves recipients data in senders friends list.
+const { Solochat } = require("../models/soloChatSchema.cjs")
 
 
+const validateUser = async (profileId) => {
+  const user = await User.findOne({ profileId });
+  if (!user) {
+    throw new Error(`User with profileId ${profileId} not found`);
+  }
+  return user;
+};
 exports.sendFriendRequest = async (req, res) => {
+  console.log("Received friend request");
   try {
     const { senderId, receiverId, username, profilePic } = req.body;
 
     if (!senderId || !receiverId) {
-      return res
-        .status(400)
-        .json({ message: "Sender and receiver IDs are required." });
+      return res.status(400).json({ message: "Sender and receiver IDs are required." });
     }
 
-    // Check if the receiver exists
-    const receiver = await User.findOne({ profileId: receiverId });
-    if (!receiver) {
-      return res.status(404).json({ message: "ReceiverId not found." });
-    }
-
-    // Check if the sender exists
-    const sender = await User.findOne({ profileId: senderId });
-    if (!sender) {
-      return res.status(404).json({ message: "SenderId not found." });
-    }
-
-    // Prevent sending a friend request to oneself
     if (senderId === receiverId) {
-      return res
-        .status(400)
-        .json({ message: "You can't send a friend request to yourself." });
+      return res.status(400).json({ message: "You cannot send a friend request to yourself." });
     }
 
-    // Check if a friend request already exists for the receiver
-    const alreadyRequestedReceiver = receiver.friends.some(
+    const sender = await User.findOne({ profileId: senderId });
+    const receiver = await User.findOne({ profileId: receiverId });
+
+    if (!sender || !receiver) {
+      return res.status(404).json({ message: "Sender or receiver not found." });
+    }
+
+    // Check if a pending request or friendship already exists
+    const requestExists = receiver.friends.some(
       (friend) => friend.senderId === senderId && friend.status === "pending"
     );
-    if (alreadyRequestedReceiver) {
-      return res
-        .status(400)
-        .json({ message: "Friend request already sent to receiver." });
+
+    if (requestExists) {
+      return res.status(400).json({ message: "Friend request already sent." });
     }
 
-    // Add the friend request to the receiver's friends list
-    receiver.friends.push({
-      senderId, // Explicitly add senderId
-      receiverId,
-      username,
-      profilePic,
-      status: "pending",
-    });
-    await receiver.save();
-
-    // Add the friend request to the sender's friends list
+    // Add the friend request to both sender and receiver
+    receiver.friends.push({ senderId, username, profilePic, status: "pending" });
     sender.friends.push({
       receiverId,
-      senderId,
       username: receiver.username,
       profilePic: receiver.profilePic,
       status: "pending",
     });
+
+    await receiver.save();
     await sender.save();
 
-    // Emit event to notify clients
+    // Notify the receiver in real-time
+    const io = getSocketInstance(); // Get the Socket.IO instance
     io.to(receiverId).emit("friendRequestSent", {
       senderId,
       username,
       profilePic,
       status: "pending",
     });
-    console.log('Emitted friendRequestSent event:', { senderId, receiverId, username, profilePic });
 
-    console.log(
-      `${sender.username} sent a friend request to ${receiver.username}`
-    );
-    return res.status(200).json({
-      message: "Friend request sent successfully.",
-      senderId: senderId
-    });
+    return res.status(200).json({ message: "Friend request sent successfully." });
   } catch (error) {
-    console.error("Error sending friend request:", error);
-    res
-      .status(500)
-      .json({ message: "An error occurred while sending the friend request." });
+    console.error("Error sending friend request:", error.message);
+    res.status(500).json({ message: "Failed to send friend request." });
   }
 };
 

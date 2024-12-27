@@ -53,6 +53,7 @@ export const AddFriendDialog = () => {
         username, // Sender's username
         profilePic, // Sender's profile picture
       });
+      console.log(response);
       // Show a success toast if the request is successful
       if (response.status === 200) {
         showSuccessToast("Friend request sent!");

@@ -1,19 +1,68 @@
 import { create } from "zustand";
 import { io } from "socket.io-client";
 
-export const useSocketStore = create((set) => ({
-  socket: null, //null because initially connection isnt established yet
+export const useSocketStore = create((set) => {
+  let socket = null;
 
-  connectSocket: () => {
-    const socket = io("http://localhost:3000"); // Replace with your backend URL
+  const connectSocket = () => {
+    if (socket) {
+      return;
+    }
+
+    console.log("Connecting to Socket.IO server...");
+    socket = io("http://localhost:3000", {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+
+    socket.on("connect", () => {
+      console.log(`Connected to Socket.IO server: ${socket.id}`);
+      set({ isConnected: true });
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from Socket.IO server");
+      set({ isConnected: false });
+    });
+
     set({ socket });
-  },
+  };
 
-  disconnectSocket: () => {
-    const { socket } = useSocketStore.getState();
+  const disconnectSocket = () => {
     if (socket) {
       socket.disconnect();
-      set({ socket: null });
+      console.log("Socket disconnected.");
+      set({ isConnected: false, socket: null });
+      socket = null;
+    } else {
+      console.warn("No active socket to disconnect.");
     }
-  },
-}));
+  };
+
+  const addSocketHandler = (event, handler) => {
+    if (!socket) {
+      console.warn("Socket is not connected. Unable to add handler.");
+      return;
+    }
+    socket.on(event, handler);
+    console.log(`Handler added for event: ${event}`);
+  };
+
+  const removeSocketHandler = (event, handler) => {
+    if (!socket) {
+      console.warn("Socket is not connected. Unable to remove handler.");
+      return;
+    }
+    socket.off(event, handler);
+    console.log(`Handler removed for event: ${event}`);
+  };
+
+  return {
+    socket: null,
+    isConnected: false,
+    connectSocket,
+    disconnectSocket,
+    addSocketHandler,
+    removeSocketHandler,
+  };
+});

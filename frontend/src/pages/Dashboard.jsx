@@ -7,26 +7,27 @@ import { DirectMessageList } from "../components/DirectMessageList";
 import { useEffect } from "react";
 import { fetchProfile } from "../../utils/fetchProfile";
 import { useParams } from "react-router-dom";
-// import { useSocketStore } from "../../store/useSocketStore";
 import { useFriendsStore } from "../../store/useFriendsStore";
 import { fetchChat } from "../../utils/fetchChat";
 import { useFetchChatStore } from "../../store/useFetchChatStore";
-// import { useFriendListStore } from "../../store/useFriendListStore";
 import { useSocketStore } from "../../store/useSocketStore";
 
 
 
 export const Dashboard = () => {
-  const {  connectSocket } = useSocketStore(); // Extract the socket
+  const {  connectSocket,  disconnectSocket } = useSocketStore(); // Extract the socket
   // const {  setFriendList } = useFriendListStore(); // Global friend state
   const { setSenderId } = useFriendsStore();
   const { setChats } = useFetchChatStore(); // Zustand store to manage chat state
   const { profileId } = useParams();
-  useEffect(()=>{
-    console.log('attempting to connect to socket')
-    connectSocket()
 
-  },[connectSocket])
+  useEffect(() => {
+    connectSocket();
+
+    return () => {
+      disconnectSocket();
+    };
+  }, [connectSocket, disconnectSocket]);
 
   useEffect(() => {
     if (profileId) {

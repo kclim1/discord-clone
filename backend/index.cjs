@@ -2,14 +2,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const http = require("http");
-const socketIo = require("socket.io");
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-  },
-});
+const { initializeSocket } = require("./socket.cjs"); // Import the socket manager
 const router = require("express-router");
 const expressValidator = require("express-validator");
 const path = require("path");
@@ -26,50 +19,41 @@ const cors = require("./middleware/corsConfig.cjs");
 const googleStrategy = require("./passport/googleStrategy.cjs");
 const localStrategy = require("./passport/localStrategy.cjs");
 const githubStrategy = require("./passport/githubStrategy.cjs");
-const authRoutes = require("./routes/authRoutes.cjs");  
-const messageRoutes = require('./routes/messageRoutes.cjs')
+const authRoutes = require("./routes/authRoutes.cjs");
+const messageRoutes = require("./routes/messageRoutes.cjs");
+
+const server = http.createServer(app);
 
 // Connect mongoose
 mongooseConnect();
 
-//cors moved to corsConfig.js
+// Middleware setup
 app.use(cors);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
-// Passport serialization and deserialization
+
+// Passport setup
 serializeUser();
 deserializeUser();
-//serialize and deserialize user moved to passport/serializeUser.js
 
-// Set up session handling with MongoDB store
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Set up Google OAuth Strategy with Passport
+// Set up Google, GitHub, and local OAuth Strategies
 googleStrategy();
-//google strat moved to googleStrategy.js
 githubStrategy();
 localStrategy();
-//routes moved to auth routes
+
+// Routes
 app.use(authRoutes);
-app.use(messageRoutes)
+app.use(messageRoutes);
 
-io.on("connection", (socket) => {
-  console.log(`User has connected to socket: ${socket.id}`);
-
-  socket.on("sendMessage", ({ room, message, sender }) => {
-    console.log(`Message received in room ${room} from ${sender}: ${message}`);
-    io.to(room).emit("receiveMessage", { sender, message });
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`User disconnected from socket: ${socket.id}`);
-  });
-});
+// Initialize Socket.IO
+initializeSocket(server);
 
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-module.exports = { io }; // Export io for use in other files
+module.exports = { server }; // Export server if needed elsewhere
