@@ -1,24 +1,36 @@
 import { FriendListIcon } from "./FriendListIcon";
 import { NewDirectMessage } from "./NewDirectMessages";
-// import { fetchSession } from '../../utils/fetchSession';
-// import { useEffect } from 'react';
-// import { OnlineIndicator } from './OnlineIndicator';
-// import { OfflineIndicator } from './OfflineIndicator';
-// import { fetchChat } from "../../utils/fetchChat";
-// import { useEffect } from "react";
 import { ChatUI } from "./FriendPageComponents/ChatUI";
+import {useFetchChatStore} from '../../store/useFetchChatStore';
+import { useNavigate } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+
 
 export const DirectMessageList = () => {
- 
-
+  const { chats } = useFetchChatStore()
+  const navigate = useNavigate();
+  const { profileId } = useParams();
+  const handleChatClick = (chatId) => {
+    navigate(`/dashboard/${profileId}/direct-messages/${chatId}`);
+  };
   return (
     <div>
-      <FriendListIcon />
-      <NewDirectMessage />
-      <ChatUI/>
+      <FriendListIcon/>
+      <NewDirectMessage/>
+      {chats.map((chat) => (
+        <ChatUI
+          key={chat.chatId}
+          chat={chat}
+          onClick={() => handleChatClick(chat.chatId)}
+        />
+      ))}
     </div>
-  );
-};
+  )
+  };
 
-// this is the list that displays who your friends are and who you are chatting with
-// friends list basically
+
+// const allParticipants = chats.flatMap(chat => chat.participants);
+
+// console.log(allParticipants);
+
+// [1] this is the req body { participants: [ '107202194291034125271', '141093256' ] }

@@ -7,29 +7,31 @@ import { DirectMessageList } from "../components/DirectMessageList";
 import { useEffect } from "react";
 import { fetchProfile } from "../../utils/fetchProfile";
 import { useParams } from "react-router-dom";
-import { useSocketStore } from "../../store/useSocketStore";
+// import { useSocketStore } from "../../store/useSocketStore";
 import { useFriendsStore } from "../../store/useFriendsStore";
 import { fetchChat } from "../../utils/fetchChat";
 import { useFetchChatStore } from "../../store/useFetchChatStore";
+// import { useFriendListStore } from "../../store/useFriendListStore";
+import { useSocketStore } from "../../store/useSocketStore";
+
+
 
 export const Dashboard = () => {
-  const connectSocket = useSocketStore((state) => state.connectSocket); //extracts the connection function
-  const disconnectSocket = useSocketStore((state) => state.disconnectSocket); // extracts function to handle disconnect
+  const {  connectSocket } = useSocketStore(); // Extract the socket
+  // const {  setFriendList } = useFriendListStore(); // Global friend state
   const { setSenderId } = useFriendsStore();
   const { setChats } = useFetchChatStore(); // Zustand store to manage chat state
   const { profileId } = useParams();
+  useEffect(()=>{
+    console.log('attempting to connect to socket')
+    connectSocket()
+
+  },[connectSocket])
 
   useEffect(() => {
     if (profileId) {
       setSenderId(profileId);
       fetchProfile(profileId);
-      console.log("Connecting socket...");
-      connectSocket();
-
-      return () => {
-        console.log("Disconnecting socket...");
-        disconnectSocket();
-      };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileId]);
@@ -57,6 +59,7 @@ export const Dashboard = () => {
         <ServerListSidebar />
         <div className="channel-container flex flex-col justify-between bg-[#2f3136]">
           <div className="text-channels bg-[#2f3136] text-white flex-grow ">
+            
             <DirectMessageList />
             {/* Other components like DirectMessageList */}
           </div>

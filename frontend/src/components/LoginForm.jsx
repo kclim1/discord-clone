@@ -2,6 +2,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import useSnackbarStore from '../../store/snackbarStore';
+import { useParams } from "react-router-dom";
 
 
 export const LoginForm = function () {
@@ -11,6 +12,8 @@ export const LoginForm = function () {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null); 
   const [isLoading,setIsLoading] = useState(false)
+  const {profileId} = useParams()
+  
 
   const handleUsername = (event) => {
     setUsername(event.target.value);
@@ -31,7 +34,7 @@ export const LoginForm = function () {
         setSnackbar({ message: 'Welcome back!', severity: 'success' });
 
         console.log("local login success");
-        navigate("/dashboard");
+        navigate(`/dashboard/${profileId}`);
       }
     } catch (error) {
       if (error.response.status === 401) {

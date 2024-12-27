@@ -22,7 +22,7 @@ export const UpdateProfileForm = () => {
       event.preventDefault()
       try {
         // Destructure the `user` object and send the relevant fields to the backend
-        const { username, email, profilePic ,password , profileId } = user;
+        const { username, email, profilePic ,password , profileId  } = user;
     
         // Send a PUT request to update the user's profile
         const response = await axios.put(

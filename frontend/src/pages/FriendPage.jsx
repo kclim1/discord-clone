@@ -3,8 +3,10 @@ import { fetchFriends } from "../../utils/fetchFriends";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useFriendListStore } from "../../store/useFriendListStore";
+import { useSocketStore } from "../../store/useSocketStore";
 
 export const FriendPage = () => {
+  // const {socket} = useSocketStore()
   const {setFriendList , friendList } = useFriendListStore()
   const { profileId } = useParams(); // Current user's profile ID
   const [friends, setFriends] = useState([]); // State to store friends
@@ -15,6 +17,7 @@ export const FriendPage = () => {
         const fetchedFriends = await fetchFriends(profileId); // Fetch friends from backend
         setFriends(fetchedFriends); // Update state
         setFriendList(fetchedFriends) //global states 
+        
       } catch (error) {
         console.error("Failed to load friends:", error);
       }
@@ -22,19 +25,35 @@ export const FriendPage = () => {
     loadFriends();
   }, [profileId , setFriendList]);
 
+  // useEffect(() => {
+  //   console.log('this is socket',socket)
+  //   if (socket) {
+  //     socket.on("friendRequestSent", (data) => {
+  //       console.log("Friend request received:", data);
+  //       setFriends((prev) => [...prev, data])
+  //       setFriendList((prev) => [...prev, data]);
+  //     });
+
+  //     // Cleanup function to remove the event listener
+  //     return () => {
+  //       socket.off("friendRequestSent");
+  //     };
+  //   }
+  // }, [socket, setFriendList]);
+
   //used for debugging state
   useEffect(() => {
-    console.log("useFriendListStore :", friendList);
+    console.log("this is the friendList from useFriendListStore at friendpage:", friendList);
   }, [friendList]);
 
   // Accept friend request
-  const handleAccept = async (friendId) => {
+  const handleAccept = async () => {
     try {
       await axios.patch(`http://localhost:3000/friends/${profileId}`, {
-        friendId,
+        friendList,
         status: "accepted",
       });
-    
+      console.log('handleaccpet clicked , friendId:', friendList)
     } catch (error) {
       console.error("Error accepting friend request:", error);
     }
@@ -78,13 +97,13 @@ export const FriendPage = () => {
                 {friend.receiverId === profileId && (
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleAccept(friend._id)}
+                      onClick={() => handleAccept(friend.profileId)}
                       className="px-4 py-2 bg-green-500 rounded-lg hover:bg-green-600"
                     >
                       Accept
                     </button>
                     <button
-                      onClick={() => handleReject(friend._id)}
+                      onClick={() => handleReject(friend.senderId)}
                       className="px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600"
                     >
                       Decline

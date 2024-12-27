@@ -38,7 +38,7 @@ export const UserFooter = () => {
             
           >
             {/* Username with truncation */}
-            <p className="text-sm font-semibold truncate">
+            <p className="text-sm p-2 font-semibold truncate">
               {user.username || "Username"}
             </p>
           </div>

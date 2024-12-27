@@ -55,7 +55,8 @@ router.get(
       passport.authenticate('local', { failureRedirect: false }), 
       (req, res) => {
         console.log('local strat success')
-        return res.status(200).json({ message: 'Local login successful' });
+        res.redirect(`http://localhost:5173/dashboard/${req.user.profileId}`);
+        // return res.status(200).json({ message: 'Local login successful' });
       },
       (err, req, res, next) => {
         console.log('local strat failed')

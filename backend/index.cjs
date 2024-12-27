@@ -56,21 +56,15 @@ app.use(authRoutes);
 app.use(messageRoutes)
 
 io.on("connection", (socket) => {
-  console.log(`User has connected: ${socket.id}`);
+  console.log(`User has connected to socket: ${socket.id}`);
 
   socket.on("sendMessage", ({ room, message, sender }) => {
     console.log(`Message received in room ${room} from ${sender}: ${message}`);
     io.to(room).emit("receiveMessage", { sender, message });
   });
 
-
-  socket.on("sendMessage", ({ room, message }) => {
-    console.log(`Message received in room ${room}: ${message}`);
-    io.to(room).emit("receiveMessage", { sender: socket.id, message });
-  });
-
   socket.on("disconnect", () => {
-    console.log(`User disconnected: ${socket.id}`);
+    console.log(`User disconnected from socket: ${socket.id}`);
   });
 });
 
@@ -78,3 +72,4 @@ server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
+module.exports = { io }; // Export io for use in other files
