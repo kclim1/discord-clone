@@ -37,11 +37,11 @@ router.get(
     passport.authenticate('github', { session : true }),
     (req,res)=>{
       if(req.user){
-        console.log('github login success')
+        // console.log('github login success')
         res.redirect(`http://localhost:5173/dashboard/${req.user.profileId}`);
         // return res.status(200).json({message:"github login successful"})
       }else{
-        console.log('github login success')
+        // console.log('github login success')
         return res.status(401).json({message:"github login failed ", user: req.user })
       }
     }

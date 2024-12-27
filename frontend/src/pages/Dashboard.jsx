@@ -15,7 +15,7 @@ import { useSocketStore } from "../../store/useSocketStore";
 
 
 export const Dashboard = () => {
-  const {  connectSocket,  disconnectSocket } = useSocketStore(); // Extract the socket
+  const { isConnected, connectSocket, disconnectSocket, registerSocket } = useSocketStore(); // Add registerSocket
   // const {  setFriendList } = useFriendListStore(); // Global friend state
   const { setSenderId } = useFriendsStore();
   const { setChats } = useFetchChatStore(); // Zustand store to manage chat state
@@ -33,9 +33,12 @@ export const Dashboard = () => {
     if (profileId) {
       setSenderId(profileId);
       fetchProfile(profileId);
+      if (isConnected){
+        registerSocket(profileId)
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profileId]);
+  }, [profileId, isConnected]);
 
   useEffect(() => {
     if (profileId) {

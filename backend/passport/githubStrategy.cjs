@@ -39,7 +39,7 @@ const githubStrategy = () => {
               profilePic: ""
             });
           }
-          console.log("user created via github");
+          // console.log("user created via github");
           cb(null, githubUser);
         } catch (error) {
           console.error(error);

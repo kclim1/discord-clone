@@ -86,9 +86,9 @@ exports.logout = (req, res, next) => {
         console.error("Error destroying session:", err);
         return next(err);
       }
-      console.log("req body", req.body);
+      // console.log("req body", req.body);
       res.clearCookie("connect.sid");
-      console.log("Successful logout");
+      // console.log("Successful logout");
       res.status(200).json({ message: "logout succesful" });
     });
   });
@@ -99,7 +99,7 @@ exports.getProfile = async (req, res) => {
     const profileId = req.params.profileId;
     const profile = await User.findOne({ profileId });
     if (profile) {
-      console.log("user found via profile id ", profile);
+      // console.log("user found via profile id ", profile);
       return res.json(profile);
     }
     return res.status(400).json({ message: "profile not found" });

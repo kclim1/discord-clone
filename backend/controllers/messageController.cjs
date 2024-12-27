@@ -1,9 +1,8 @@
 const User = require("../models/userSchema.cjs");
 const axios = require("axios");
-const { getSocketInstance } = require("../socket.cjs");
+const { getSocketByUserId, emitToUser } = require("../socket.cjs");
 const crypto = require("crypto");
-const { Solochat } = require("../models/soloChatSchema.cjs")
-
+const SoloChat = require('../models/solochatschema.cjs');
 
 const validateUser = async (profileId) => {
   const user = await User.findOne({ profileId });
@@ -13,7 +12,6 @@ const validateUser = async (profileId) => {
   return user;
 };
 exports.sendFriendRequest = async (req, res) => {
-  console.log("Received friend request");
   try {
     const { senderId, receiverId, username, profilePic } = req.body;
 
@@ -37,9 +35,9 @@ exports.sendFriendRequest = async (req, res) => {
       (friend) => friend.senderId === senderId && friend.status === "pending"
     );
 
-    if (requestExists) {
-      return res.status(400).json({ message: "Friend request already sent." });
-    }
+    // if (requestExists) {
+    //   return res.status(400).json({ message: "Friend request already sent." });
+    // }
 
     // Add the friend request to both sender and receiver
     receiver.friends.push({ senderId, username, profilePic, status: "pending" });
@@ -53,9 +51,7 @@ exports.sendFriendRequest = async (req, res) => {
     await receiver.save();
     await sender.save();
 
-    // Notify the receiver in real-time
-    const io = getSocketInstance(); // Get the Socket.IO instance
-    io.to(receiverId).emit("friendRequestSent", {
+    emitToUser(receiverId, "friendRequestSent", {
       senderId,
       username,
       profilePic,
@@ -189,16 +185,16 @@ exports.createNewChat = async (req, res) => {
 exports.getAllChat = async (req, res) => {
   try {
     const profileId = req.params.profileId;
-    console.log("This is the user:", profileId);
+    // console.log("This is the user:", profileId);
 
-    const chats = await Solochat.find({
-      participants: profileId,
+    const chats = await SoloChat.find({
+        participants: profileId,
     });
 
     if (!chats || chats.length === 0) {
       return res.status(404).json({ message: "No chats found for this user." });
     }
-    console.log("this is chats backend", chats);
+    // console.log("this is chats backend", chats);
     res.status(200).json(chats);
   } catch (error) {
     console.error("Error fetching all chats:", error);

@@ -12,7 +12,7 @@ const googleStrategy = () => {
       },
       async (accessToken, refreshToken, profile, cb) => {
         try {
-          console.log("profile id : ", profile.id);
+          // console.log("profile id : ", profile.id);
           let googleUser = await User.findOne({ profileId: profile.id });
           if (!googleUser) {
             googleUser = await User.create({
@@ -29,7 +29,7 @@ const googleStrategy = () => {
 
             await googleUser.save();
           }
-          console.log("google auth done");
+          // console.log("google auth done");
           cb(null, googleUser);
         } catch (error) {
           cb(error);

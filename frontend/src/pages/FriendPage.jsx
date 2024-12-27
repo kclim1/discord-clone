@@ -1,69 +1,69 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { fetchFriends } from "../../utils/fetchFriends";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useFriendListStore } from "../../store/useFriendListStore";
 import { useSocketStore } from "../../store/useSocketStore";
 
+import { showSuccessToast } from "../../utils/toastUtil";
+
 export const FriendPage = () => {
-  const { addSocketHandler, removeSocketHandler, connectSocket } = useSocketStore();
-  const {setFriendList , friendList } = useFriendListStore()
+  const { isConnected, addSocketHandler, removeSocketHandler } = useSocketStore();
+  const { setFriendList, friendList } = useFriendListStore(); // Global state for friend list
   const { profileId } = useParams(); // Current user's profile ID
-  const [friends, setFriends] = useState([]); // State to store friends
+
+  const loadFriends = async () => {
+    try {
+      const fetchedFriends = await fetchFriends(profileId);
+      setFriendList(Array.isArray(fetchedFriends) ? fetchedFriends : []);
+    } catch (error) {
+      console.error("Failed to load friends:", error);
+    }
+  };
 
   useEffect(() => {
-    const loadFriends = async () => {
-      try {
-        const fetchedFriends = await fetchFriends(profileId); // Fetch friends from backend
-        setFriends(fetchedFriends); // Update state
-        setFriendList(fetchedFriends) //global states 
-        
-      } catch (error) {
-        console.error("Failed to load friends:", error);
-      }
-    };
-    loadFriends();
-  }, [profileId , setFriendList]);
+    if (profileId) {
+      loadFriends();
+    }
+  }, [profileId]);
 
   useEffect(() => {
     const handleFriendRequest = (data) => {
-      console.log("Friend request received:", data);
-      setFriends((prev) => [...prev, data])
-      setFriendList((prev) => [...prev, data]);
+      showSuccessToast("Friend request received!");
+      loadFriends(); // Re-fetch friends list on new request
     };
 
-    addSocketHandler("friendRequestSent", handleFriendRequest);
+    if (isConnected) {
+      addSocketHandler("friendRequestSent", handleFriendRequest);
+    }
 
     return () => {
-      removeSocketHandler("friendRequestSent", handleFriendRequest);
+      if (isConnected) {
+        removeSocketHandler("friendRequestSent", handleFriendRequest);
+      }
     };
-  }, [addSocketHandler, removeSocketHandler, connectSocket]);
+  }, [isConnected, addSocketHandler, removeSocketHandler]);
 
-
-  //used for debugging state
-  useEffect(() => {
-    console.log("this is the friendList from useFriendListStore at friendpage:", friendList);
-  }, [friendList]);
-
-  // Accept friend request
-  const handleAccept = async () => {
+  const handleAccept = async (friendId) => {
     try {
       await axios.patch(`http://localhost:3000/friends/${profileId}`, {
-        friendList,
+        friendId,
         status: "accepted",
       });
-      console.log('handleaccpet clicked , friendId:', friendList)
+      console.log(`Friend request from ${friendId} accepted.`);
+      loadFriends(); // Re-fetch updated friends list
     } catch (error) {
       console.error("Error accepting friend request:", error);
     }
   };
 
-  // Reject friend request
   const handleReject = async (friendId) => {
     try {
       await axios.delete(`http://localhost:3000/friends/${profileId}`, {
         data: { friendId },
       });
+      console.log(`Friend request from ${friendId} rejected.`);
+      loadFriends(); // Re-fetch updated friends list
     } catch (error) {
       console.error("Error rejecting friend request:", error);
     }
@@ -73,26 +73,17 @@ export const FriendPage = () => {
     <div className="friend-page p-4 bg-[#3c3f43] text-white w-full h-full">
       <h1 className="text-2xl font-bold mb-4">Friends</h1>
 
-      {/* Pending Friend Requests */}
       <div className="friend-requests mb-8">
         <h2 className="text-xl font-semibold mb-2">Pending Friend Requests</h2>
         <ul className="space-y-4">
-          {friends
+          {(Array.isArray(friendList) ? friendList : [])
             .filter((friend) => friend.status === "pending")
             .map((friend) => (
-              <li
-                key={friend._id}
-                className="flex items-center justify-between bg-[#3c3f43] p-4 rounded-lg"
-              >
+              <li key={friend._id} className="flex items-center justify-between bg-[#3c3f43] p-4 rounded-lg">
                 <div className="flex items-center space-x-4">
-                  <img
-                    src={friend.profilePic || "/avatar.png"}
-                    alt="Profile"
-                    className="w-12 h-12 rounded-full"
-                  />
+                  <img src={friend.profilePic || "/avatar.png"} alt="Profile" className="w-12 h-12 rounded-full" />
                   <span>{friend.username}</span>
                 </div>
-                {/* if you are receiver, render buttons.  */}
                 {friend.receiverId === profileId && (
                   <div className="flex space-x-2">
                     <button
@@ -102,42 +93,13 @@ export const FriendPage = () => {
                       Accept
                     </button>
                     <button
-                      onClick={() => handleReject(friend.senderId)}
+                      onClick={() => handleReject(friend.profileId)}
                       className="px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600"
                     >
                       Decline
                     </button>
                   </div>
                 )}
-                {/* if you are sender, render request pending */}
-                {friend.senderId === profileId && (
-                  <div className="text-sm text-gray-400">Request Pending</div>
-                )}
-              </li>
-            ))}
-        </ul>
-      </div>
-
-      {/* Accepted Friends */}
-      <div className="accepted-friends">
-        <h2 className="text-xl font-semibold mb-2">Accepted Friends</h2>
-        <ul className="space-y-4">
-          {friends
-            .filter((friend) => friend.status === "accepted")
-            .map((friend) => (
-              <li
-                key={friend._id}
-                className="flex items-center justify-between bg-[#3c3f43] p-4 rounded-lg"
-              >
-                <div className="flex items-center space-x-4">
-                  <img
-                    src={friend.profilePic || "/avatar.png"}
-                    alt="Profile"
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <span>{friend.username}</span>
-                  <span>{friend.senderId || friend.receiverId}</span>
-                </div>
               </li>
             ))}
         </ul>

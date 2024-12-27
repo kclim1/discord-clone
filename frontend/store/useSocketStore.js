@@ -28,6 +28,15 @@ export const useSocketStore = create((set) => {
     set({ socket });
   };
 
+  const registerSocket = (profileId) => {
+    if (socket && socket.connected) {
+      console.log(`Registering profileId: ${profileId} with socket.`);
+      socket.emit("register", profileId);
+    } else {
+      console.warn("Socket is not connected. Unable to register.");
+    }
+  };
+
   const disconnectSocket = () => {
     if (socket) {
       socket.disconnect();
@@ -44,6 +53,7 @@ export const useSocketStore = create((set) => {
       console.warn("Socket is not connected. Unable to add handler.");
       return;
     }
+    socket.off(event, handler); // Ensure no duplicate listeners
     socket.on(event, handler);
     console.log(`Handler added for event: ${event}`);
   };
@@ -58,10 +68,10 @@ export const useSocketStore = create((set) => {
   };
 
   return {
-    socket: null,
     isConnected: false,
     connectSocket,
     disconnectSocket,
+    registerSocket,
     addSocketHandler,
     removeSocketHandler,
   };
