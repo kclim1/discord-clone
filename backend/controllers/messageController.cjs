@@ -134,48 +134,42 @@ exports.acceptFriendRequest = async (req, res) => {
 
   
 
-
 exports.rejectFriendRequest = async (req, res) => {
   try {
-    const { profileId } = req.params; // Recipient's profile ID
-    const { friendId } = req.body; // Sender's profile ID from the request body
+    const { friendId } = req.body;
 
-    if (!profileId || !friendId) {
-      return res
-        .status(400)
-        .json({ message: "Profile ID and Friend ID are required." });
+    if (!friendId) {
+      return res.status(400).json({ message: "FriendId is required." });
     }
 
-    // Find the recipient (user) and the friend request
-    const user = await User.findOne({ profileId });
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
-    }
-
-    const friendIndex = user.friends.findIndex(
-      (f) => f.friendId === friendId && f.status === "pending"
+    // Step 1: Remove the friend request from all user documents that have it
+    const deleteResult = await User.updateMany(
+      { "friends._id": friendId }, // Query all documents containing the friendId
+      { $pull: { friends: { _id: friendId } } } // Remove the friend request
     );
-    if (friendIndex === -1) {
-      return res.status(400).json({
-        message: "No pending friend request found for this friend ID.",
-      });
+
+    // Check if any documents were updated
+    if (deleteResult.matchedCount === 0) {
+      return res.status(404).json({ message: "Friend request not found." });
     }
+    console.log(`Friend request ${friendId} deleted.`);
 
-    // Remove the friend request from the friends array
-    user.friends.splice(friendIndex, 1);
-    await user.save();
-
-    console.log(`Friend request from ${friendId} rejected by ${profileId}`);
-    return res
-      .status(200)
-      .json({ message: "Friend request rejected successfully." });
+    // Step 2: Respond with success
+    res.status(200).json({
+      message: "Friend request deleted successfully.",
+      matchedCount: deleteResult.matchedCount,
+      modifiedCount: deleteResult.modifiedCount,
+    });
   } catch (error) {
-    console.error("Error rejecting friend request:", error);
+    console.error("Error deleting friend request:", error.message);
     res.status(500).json({
-      message: "An error occurred while rejecting the friend request.",
+      message: "An error occurred while deleting the friend request.",
     });
   }
 };
+
+
+
 
 //creates new one to one chat or group chat
 exports.createNewChat = async (req, res) => {

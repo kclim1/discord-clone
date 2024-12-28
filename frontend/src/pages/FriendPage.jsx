@@ -72,7 +72,7 @@ export const FriendPage = () => {
       await axios.delete(`http://localhost:3000/friends/${profileId}`, {
         data: { friendId },
       });
-
+      showSuccessToast("Friend request rejected!");
       loadFriends(); // Re-fetch updated friends list
     } catch (error) {
       console.error("Error rejecting friend request:", error);
