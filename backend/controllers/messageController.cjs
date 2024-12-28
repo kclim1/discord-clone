@@ -98,17 +98,40 @@ exports.getFriends = async (req, res) => {
   }
 };
 
-exports.acceptFriendRequest = async(req,res)=>{
-  try{
-    const {profileId} = req.params;
-    const {friendList} = req.body
-    console.log('this is the friend list', friendList)
+exports.acceptFriendRequest = async (req, res) => {
+  try {
+    const { friendId } = req.body;
 
-  }catch(error){
-    console.error(error)
-    res.status(500).json({message:"An error occurred while accepting the friend request."})
+    if (!friendId) {
+      return res.status(400).json({ message: "FriendId is required." });
+    }
+
+    // Step 1: Update all user documents that have the friendId
+    const updateResult = await User.updateMany(
+      { "friends._id": friendId }, // Query all documents containing the friendId
+      { $set: { "friends.$.status": "accepted" } } // Update the status to "accepted"
+    );
+
+    // Check if any documents were updated
+    if (updateResult.matchedCount === 0) {
+      return res.status(404).json({ message: "Friend request not found." });
+    }
+    console.log(`Friend request ${friendId} accepted.`);
+    // Step 2: Respond with success
+    res.status(200).json({
+      message: "Friend request accepted.",
+      matchedCount: updateResult.matchedCount,
+      modifiedCount: updateResult.modifiedCount,
+    });
+  } catch (error) {
+    console.error("Error accepting friend request:", error.message);
+    res.status(500).json({
+      message: "An error occurred while accepting the friend request.",
+    });
   }
-}
+};
+
+
   
 
 

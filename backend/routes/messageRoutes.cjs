@@ -1,16 +1,16 @@
 const express = require('express')
 const router = express.Router()
-const chatController = require('../controllers/messageController.cjs')
+const messageController = require('../controllers/messageController.cjs')
 
 
 
-router.post('/friend-requests/:profileId', chatController.sendFriendRequest); 
-router.post('/new-chat',chatController.createNewChat)
-router.get('/chats/:profileId',chatController.getAllChat)  //fetches all chat user is involved in 
-router.get('/friends/:profileId', chatController.getFriends); 
-router.get('/friends/:friendId', chatController.getFriendById);
-router.patch('/friends/:profileId',chatController.acceptFriendRequest)
-router.delete('/friends/:profileId',chatController.rejectFriendRequest)
+router.post('/friend-requests/:profileId', messageController.sendFriendRequest); 
+router.post('/new-chat',messageController.createNewChat)
+router.get('/chats/:profileId',messageController.getAllChat)  //fetches all chat user is involved in 
+router.get('/friends/:profileId', messageController.getFriends); 
+router.get('/friends/:friendId', messageController.getFriendById);
+router.patch('/friends/:profileId',messageController.acceptFriendRequest)
+router.delete('/friends/:profileId',messageController.rejectFriendRequest)
 
 module.exports = router 
 
