@@ -159,8 +159,6 @@ exports.acceptFriendRequest = async (req, res) => {
 
 
 
-  
-
 exports.rejectFriendRequest = async (req, res) => {
   try {
     const { friendId } = req.body;
@@ -169,28 +167,53 @@ exports.rejectFriendRequest = async (req, res) => {
       return res.status(400).json({ message: "FriendId is required." });
     }
 
-    // Step 1: Remove the friend request from all user documents that have it
-    const deleteResult = await User.updateMany(
-      { "friends._id": friendId }, // Query all documents containing the friendId
-      { $pull: { friends: { _id: friendId } } } // Remove the friend request
-    );
+    // Step 1: Locate the friend request in the receiver's document
+    const receiver = await User.findOne({ "friends._id": friendId }, { "friends.$": 1 });
 
-    // Check if any documents were updated
-    if (deleteResult.matchedCount === 0) {
+    if (!receiver) {
       return res.status(404).json({ message: "Friend request not found." });
     }
-    console.log(`Friend request ${friendId} deleted.`);
 
-    // Step 2: Respond with success
+    // Extract the senderId and receiverId from the friend object
+    const friendRequest = receiver.friends[0];
+    const { senderId, receiverId } = friendRequest;
+
+    console.log(`Found friend request to reject: ${friendRequest}`);
+
+    // Step 2: Remove the friend request from the receiver's `friends` array
+    const updateReceiver = await User.updateOne(
+      { "friends._id": friendId },
+      { $pull: { friends: { _id: friendId } } }
+    );
+
+    if (updateReceiver.matchedCount === 0) {
+      return res.status(404).json({ message: "Failed to update receiver's friend list." });
+    }
+
+    // Step 3: Remove the friend request from the sender's `friends` array
+    const updateSender = await User.updateOne(
+      {
+        profileId: senderId,
+        "friends.senderId": senderId,
+        "friends.receiverId": receiverId,
+      },
+      { $pull: { friends: { senderId, receiverId } } }
+    );
+
+    if (updateSender.matchedCount === 0) {
+      return res.status(404).json({ message: "Failed to update sender's friend list." });
+    }
+
+    console.log(`Friend request ${friendId} rejected and removed for both sender and receiver.`);
+
+    // Step 4: Respond with success
     res.status(200).json({
-      message: "Friend request deleted successfully.",
-      matchedCount: deleteResult.matchedCount,
-      modifiedCount: deleteResult.modifiedCount,
+      message: "Friend request rejected and removed for both sender and receiver.",
     });
   } catch (error) {
-    console.error("Error deleting friend request:", error.message);
+    console.error("Error rejecting friend request:", error.message);
     res.status(500).json({
-      message: "An error occurred while deleting the friend request.",
+      message: "An error occurred while rejecting the friend request.",
     });
   }
 };
