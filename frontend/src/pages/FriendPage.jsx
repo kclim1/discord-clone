@@ -4,13 +4,15 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useFriendListStore } from "../../store/useFriendListStore";
 import { useSocketStore } from "../../store/useSocketStore";
-
+import { useFriendsStore } from "../../store/useFriendsStore";
 import { showSuccessToast } from "../../utils/toastUtil";
 
 export const FriendPage = () => {
-  const { isConnected, addSocketHandler, removeSocketHandler } = useSocketStore();
+  const { isConnected, addSocketHandler, removeSocketHandler } =
+    useSocketStore();
   const { setFriendList, friendList } = useFriendListStore();
   const { profileId } = useParams();
+  const { receiverId, senderId } = useFriendsStore();
 
   // Memoize loadFriends to avoid re-creating it
   const loadFriends = useCallback(async () => {
@@ -79,6 +81,8 @@ export const FriendPage = () => {
       <h1 className="text-2xl font-bold mb-4">Friends</h1>
 
       {/* Pending Friend Requests */}
+      {/* Pending Friend Requests */}
+      {/* Pending Friend Requests */}
       <div className="friend-requests mb-8">
         <h2 className="text-xl font-semibold mb-2">Pending Friend Requests</h2>
         <ul className="space-y-4">
@@ -90,19 +94,27 @@ export const FriendPage = () => {
                 className="flex items-center justify-between bg-[#3c3f43] p-4 rounded-lg"
               >
                 <div className="flex items-center space-x-4">
-                  <img src={friend.profilePic || "/avatar.png"} alt="Profile" className="w-12 h-12 rounded-full" />
+                  <img
+                    src={friend.profilePic || "/avatar.png"}
+                    alt="Profile"
+                    className="w-12 h-12 rounded-full"
+                  />
                   <span>{friend.username}</span>
                 </div>
-                {friend.receiverId === profileId && (
+                {profileId !== friend.receiverId ? (
+                  // Current user is the sender
+                  <span className="text-gray-400">Request Pending</span>
+                ) : (
+                  // Current user is the receiver
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleAccept(friend.profileId)}
+                      onClick={() => handleAccept(friend._id)}
                       className="px-4 py-2 bg-green-500 rounded-lg hover:bg-green-600"
                     >
                       Accept
                     </button>
                     <button
-                      onClick={() => handleReject(friend.profileId)}
+                      onClick={() => handleReject(friend._id)}
                       className="px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600"
                     >
                       Decline
@@ -126,7 +138,11 @@ export const FriendPage = () => {
                 className="flex items-center justify-between bg-[#3c3f43] p-4 rounded-lg"
               >
                 <div className="flex items-center space-x-4">
-                  <img src={friend.profilePic || "/avatar.png"} alt="Profile" className="w-12 h-12 rounded-full" />
+                  <img
+                    src={friend.profilePic || "/avatar.png"}
+                    alt="Profile"
+                    className="w-12 h-12 rounded-full"
+                  />
                   <span>{friend.username}</span>
                 </div>
               </li>
