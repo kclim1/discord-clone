@@ -21,6 +21,7 @@ const localStrategy = require("./passport/localStrategy.cjs");
 const githubStrategy = require("./passport/githubStrategy.cjs");
 const authRoutes = require("./routes/authRoutes.cjs");
 const messageRoutes = require("./routes/messageRoutes.cjs");
+const profileRouter = require('./routes/profileRouter.cjs');
 
 const server = http.createServer(app);
 
@@ -48,6 +49,7 @@ localStrategy();
 // Routes
 app.use(authRoutes);
 app.use(messageRoutes);
+app.use('/profiles', profileRouter);
 
 // Initialize Socket.IO
 initializeSocket(server);

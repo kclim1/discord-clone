@@ -65,6 +65,12 @@ exports.sendFriendRequest = async (req, res) => {
       profilePic,
       status: "pending",
     });
+    emitToUser(senderId, "friendRequestSent", {
+      senderId,
+      username,
+      profilePic,
+      status: "pending",
+    });
 
 
     return res.status(200).json({ message: "Friend request sent successfully." });
@@ -221,42 +227,56 @@ exports.rejectFriendRequest = async (req, res) => {
 
 
 
-//creates new one to one chat or group chat
 exports.createNewChat = async (req, res) => {
   try {
-    const profileId = req.params.profileId;
+    const profileId = req.params.profileId; // The user initiating the chat
     const { participants } = req.body;
+
     console.log("this is the req body", req.body);
+
+    // Validation: Ensure there are at least two participants
     if (participants.length < 2) {
       return res
         .status(400)
         .json({ error: "At least two participants are required" });
     }
+
+    // Validation: Ensure no participant ID is an empty string
     if (participants.some((participant) => participant.trim() === "")) {
       return res.status(400).json({ error: "Cannot submit empty string!! " });
     }
 
     // Generate a unique chatId
     const chatId = crypto.randomBytes(8).toString("hex");
-    const otherParticipantId = participants.find((id) => id !== profileId);
-    const otherParticipant = await User.findOne({
-      profileId: otherParticipantId,
-    });
+
+    // Fetch details of both participants
+    const [participant1Id, participant2Id] = participants;
+    const participant1 = await User.findOne({ profileId: participant1Id });
+    const participant2 = await User.findOne({ profileId: participant2Id });
+
+    if (!participant1 || !participant2) {
+      return res
+        .status(404)
+        .json({ error: "One or more participants not found" });
+    }
+
     // Create a new chat
-    chat = new SoloChat({
+    const chat = new SoloChat({
       chatId,
       participants,
-      serverName: otherParticipant.username,
-      serverPicture: otherParticipant.profilePic,
     });
+
     console.log("this is the createchat backend", chat);
     await chat.save();
-    return res.status(201).json({ chat });
+
+   
+    return res.status(201).json({ chat , participants});
   } catch (error) {
     console.error("Error creating chat:", error);
     return res.status(500).json({ error: "Failed to create chat" });
   }
 };
+
 
 exports.getAllChat = async (req, res) => {
   try {
@@ -278,22 +298,23 @@ exports.getAllChat = async (req, res) => {
   }
 };
 
+
 exports.getFriendById = async (req, res) => {
   try {
-    const { friendId } = req.params;
-    console.log("this is the friend id ", friendId);
+    const {profileId} = req.params
+    const { participantId } = req.body; // Extract the participantId from the route parameters
+    console.log("Fetching profile for participantId:", profileId);
 
-    const findFriend = await User.findOne({ profileId: friendId }).select(
-      "profileId username profilePicture"
-    ); // Query based on profileId and return selected fields
+    // Query the User collection for the participant's profile
+    const participantProfile = await User.findOne({ profileId: participantId }); 
 
-    if (findFriend) {
-      return res.status(200).json({ friend: findFriend });
+    if (participantProfile) {
+      return res.status(200).json(participantProfile);
     }
-
-    return res.status(404).json({ message: "Friend not found" }); // Handle case when friend is not found
+    return res.status(404).json({ message: "Participant profile not found" });
   } catch (error) {
-    console.error("Error fetching friend:", error);
-    return res.status(500).json({ error: "Internal server error" }); // Handle server errors
+    console.error("Error fetching participant profile:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+

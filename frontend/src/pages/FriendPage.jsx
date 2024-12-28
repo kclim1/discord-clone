@@ -14,7 +14,6 @@ export const FriendPage = () => {
   const { profileId } = useParams();
   // const { receiverId, senderId } = useFriendsStore();
 
-  // Memoize loadFriends to avoid re-creating it
   const loadFriends = useCallback(async () => {
     try {
       const fetchedFriends = await fetchFriends(profileId);
@@ -52,6 +51,29 @@ export const FriendPage = () => {
       }
     };
   }, [isConnected, addSocketHandler, removeSocketHandler, loadFriends]);
+
+
+  useEffect(() => {
+    const handleSenderFriendRequest = () => {
+      
+      showSuccessToast("Friend request status updated!");
+    loadFriends()
+    };
+
+    if (isConnected) {
+      addSocketHandler("friendRequestSent", handleSenderFriendRequest);
+    }
+
+    return () => {
+      if (isConnected) {
+        removeSocketHandler("friendRequestSent", handleSenderFriendRequest);
+      }
+    };
+  }, [ isConnected , addSocketHandler, removeSocketHandler, loadFriends]);
+
+
+
+
 
   // Handle accept friend request
   const handleAccept = async (friendId) => {

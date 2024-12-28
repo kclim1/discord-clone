@@ -1,29 +1,28 @@
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Header } from "../components/Header";
 import { ServerListSidebar } from "../components/ServerListSidebar";
 import { UserFooter } from "../components/UserFooter";
 import { Toaster } from "sonner";
 import { DirectMessageList } from "../components/DirectMessageList";
-import { useEffect } from "react";
 import { fetchProfile } from "../../utils/fetchProfile";
+import { fetchFriends } from "../../utils/fetchFriends"; // Import fetchFriends
 import { useParams } from "react-router-dom";
+import { useFriendListStore } from "../../store/useFriendListStore"; // Zustand store for friend list
 import { useFriendsStore } from "../../store/useFriendsStore";
 import { fetchChat } from "../../utils/fetchChat";
 import { useFetchChatStore } from "../../store/useFetchChatStore";
 import { useSocketStore } from "../../store/useSocketStore";
 
-
-
 export const Dashboard = () => {
-  const { isConnected, connectSocket, disconnectSocket, registerSocket } = useSocketStore(); // Add registerSocket
-  // const {  setFriendList } = useFriendListStore(); // Global friend state
+  const { isConnected, connectSocket, disconnectSocket, registerSocket } = useSocketStore(); 
+  const { setFriendList } = useFriendListStore(); // Zustand store for friend list
   const { setSenderId } = useFriendsStore();
   const { setChats } = useFetchChatStore(); // Zustand store to manage chat state
   const { profileId } = useParams();
 
   useEffect(() => {
     connectSocket();
-
     return () => {
       disconnectSocket();
     };
@@ -33,12 +32,11 @@ export const Dashboard = () => {
     if (profileId) {
       setSenderId(profileId);
       fetchProfile(profileId);
-      if (isConnected){
-        registerSocket(profileId)
+      if (isConnected) {
+        registerSocket(profileId);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profileId, isConnected]);
+  }, [profileId, isConnected, registerSocket, setSenderId]);
 
   useEffect(() => {
     if (profileId) {
@@ -50,10 +48,23 @@ export const Dashboard = () => {
           console.error("Error fetching chats:", error.message);
         }
       };
-
       loadChats();
     }
   }, [profileId, setChats]);
+
+  useEffect(() => {
+    if (profileId) {
+      const loadFriends = async () => {
+        try {
+          const fetchedFriends = await fetchFriends(profileId);
+          setFriendList(Array.isArray(fetchedFriends) ? fetchedFriends : []);
+        } catch (error) {
+          console.error("Failed to load friends:", error);
+        }
+      };
+      loadFriends(); // Automatically set global friend list state on dashboard load
+    }
+  }, [profileId, setFriendList]);
 
   return (
     <div className="header-container flex flex-col h-screen overflow-hidden">
@@ -63,9 +74,7 @@ export const Dashboard = () => {
         <ServerListSidebar />
         <div className="channel-container flex flex-col justify-between bg-[#2f3136]">
           <div className="text-channels bg-[#2f3136] text-white flex-grow ">
-            
             <DirectMessageList />
-            {/* Other components like DirectMessageList */}
           </div>
           <UserFooter />
         </div>
