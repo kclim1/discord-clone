@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useFriendListStore } from "../../store/useFriendListStore";
 import { useSocketStore } from "../../store/useSocketStore";
-import { useFriendsStore } from "../../store/useFriendsStore";
+// import { useFriendsStore } from "../../store/useFriendsStore";
 import { showSuccessToast } from "../../utils/toastUtil";
 
 export const FriendPage = () => {
@@ -12,7 +12,7 @@ export const FriendPage = () => {
     useSocketStore();
   const { setFriendList, friendList } = useFriendListStore();
   const { profileId } = useParams();
-  const { receiverId, senderId } = useFriendsStore();
+  // const { receiverId, senderId } = useFriendsStore();
 
   // Memoize loadFriends to avoid re-creating it
   const loadFriends = useCallback(async () => {
@@ -23,6 +23,10 @@ export const FriendPage = () => {
       console.error("Failed to load friends:", error);
     }
   }, [profileId, setFriendList]);
+
+  useEffect(() => {
+    console.log("this is friendlist from friendpage", friendList);
+  }, [friendList]);
 
   // Fetch friends on component mount or when profileId changes
   useEffect(() => {
@@ -53,8 +57,7 @@ export const FriendPage = () => {
   const handleAccept = async (friendId) => {
     try {
       await axios.patch(`http://localhost:3000/friends/${profileId}`, {
-        friendId,
-        status: "accepted",
+        friendId
       });
 
       loadFriends(); // Re-fetch updated friends list
@@ -81,8 +84,6 @@ export const FriendPage = () => {
       <h1 className="text-2xl font-bold mb-4">Friends</h1>
 
       {/* Pending Friend Requests */}
-      {/* Pending Friend Requests */}
-      {/* Pending Friend Requests */}
       <div className="friend-requests mb-8">
         <h2 className="text-xl font-semibold mb-2">Pending Friend Requests</h2>
         <ul className="space-y-4">
@@ -101,11 +102,7 @@ export const FriendPage = () => {
                   />
                   <span>{friend.username}</span>
                 </div>
-                {profileId !== friend.receiverId ? (
-                  // Current user is the sender
-                  <span className="text-gray-400">Request Pending</span>
-                ) : (
-                  // Current user is the receiver
+                {profileId === friend.receiverId ? (
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleAccept(friend._id)}
@@ -120,6 +117,8 @@ export const FriendPage = () => {
                       Decline
                     </button>
                   </div>
+                ) : (
+                  <span className="text-gray-400">Request Pending</span>
                 )}
               </li>
             ))}

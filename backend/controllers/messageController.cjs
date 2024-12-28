@@ -14,6 +14,7 @@ const validateUser = async (profileId) => {
 exports.sendFriendRequest = async (req, res) => {
   try {
     const { senderId, receiverId, username, profilePic } = req.body;
+    const { profileId } = req.params;
 
     if (!senderId || !receiverId) {
       return res.status(400).json({ message: "Sender and receiver IDs are required." });
@@ -35,19 +36,26 @@ exports.sendFriendRequest = async (req, res) => {
       (friend) => friend.senderId === senderId && friend.status === "pending"
     );
 
-    // if (requestExists) {
-    //   return res.status(400).json({ message: "Friend request already sent." });
-    // }
+    if (requestExists) {
+      return res.status(400).json({ message: "Friend request already sent." });
+    }
 
-    // Add the friend request to both sender and receiver
-    receiver.friends.push({ senderId, username, profilePic, status: "pending" });
-    sender.friends.push({
-      receiverId,
-      username: receiver.username,
-      profilePic: receiver.profilePic,
-      status: "pending",
+    receiver.friends.push({
+      senderId, // ID of the user sending the request
+      receiverId, // ID of the receiver (current user)
+      username, // Sender's username
+      profilePic, // Sender's profile picture
+      status: "pending", // Request status
     });
-
+    
+    sender.friends.push({
+      senderId, // ID of the sender (current user)
+      receiverId, // ID of the receiver
+      username: receiver.username, // Receiver's username
+      profilePic: receiver.profilePic, // Receiver's profile picture
+      status: "pending", // Request status
+    });
+    console.log(`${receiverId} received a friend request from ${senderId}`);
     await receiver.save();
     await sender.save();
 
