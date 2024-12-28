@@ -106,22 +106,48 @@ exports.acceptFriendRequest = async (req, res) => {
       return res.status(400).json({ message: "FriendId is required." });
     }
 
-    // Step 1: Update all user documents that have the friendId
-    const updateResult = await User.updateMany(
-      { "friends._id": friendId }, // Query all documents containing the friendId
-      { $set: { "friends.$.status": "accepted" } } // Update the status to "accepted"
-    );
+    // Step 1: Locate the friend request in the receiver's document
+    const receiver = await User.findOne({ "friends._id": friendId }, { "friends.$": 1 });
 
-    // Check if any documents were updated
-    if (updateResult.matchedCount === 0) {
+    if (!receiver) {
       return res.status(404).json({ message: "Friend request not found." });
     }
-    console.log(`Friend request ${friendId} accepted.`);
-    // Step 2: Respond with success
+
+    // Extract the senderId and receiverId from the friend object
+    const friendRequest = receiver.friends[0];
+    const { senderId, receiverId } = friendRequest;
+
+    console.log(`Found friend request: ${friendRequest}`);
+
+    // Step 2: Update the receiver's friend object
+    const updateReceiver = await User.updateOne(
+      { "friends._id": friendId },
+      { $set: { "friends.$.status": "accepted" } }
+    );
+
+    if (updateReceiver.matchedCount === 0) {
+      return res.status(404).json({ message: "Failed to update receiver's friend status." });
+    }
+
+    // Step 3: Update the sender's friend object
+    const updateSender = await User.updateOne(
+      {
+        profileId: senderId, // Locate the sender
+        "friends.senderId": senderId,
+        "friends.receiverId": receiverId,
+      },
+      { $set: { "friends.$.status": "accepted" } }
+    );
+
+    if (updateSender.matchedCount === 0) {
+      return res.status(404).json({ message: "Failed to update sender's friend status." });
+    }
+
+    console.log(`Friend request ${friendId} accepted for both sender and receiver.`);
+
+    // Step 4: Respond with success
     res.status(200).json({
-      message: "Friend request accepted.",
-      matchedCount: updateResult.matchedCount,
-      modifiedCount: updateResult.modifiedCount,
+      message: "Friend request accepted for both sender and receiver.",
     });
   } catch (error) {
     console.error("Error accepting friend request:", error.message);
@@ -130,6 +156,7 @@ exports.acceptFriendRequest = async (req, res) => {
     });
   }
 };
+
 
 
   
@@ -193,7 +220,7 @@ exports.createNewChat = async (req, res) => {
       profileId: otherParticipantId,
     });
     // Create a new chat
-    chat = new Solochat({
+    chat = new SoloChat({
       chatId,
       participants,
       serverName: otherParticipant.username,

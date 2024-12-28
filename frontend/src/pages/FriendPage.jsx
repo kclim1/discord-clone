@@ -24,7 +24,9 @@ export const FriendPage = () => {
     }
   }, [profileId, setFriendList]);
 
-
+  useEffect(() => {
+    console.log("Friend List:", friendList);
+  }, [friendList]);
 
   // Fetch friends on component mount or when profileId changes
   useEffect(() => {
@@ -54,11 +56,14 @@ export const FriendPage = () => {
   // Handle accept friend request
   const handleAccept = async (friendId) => {
     try {
-      const response = await axios.patch(`http://localhost:3000/friends/${profileId}`, {
-        friendId
-      });
-      if(response.status === 200){
-        loadFriends(); 
+      const response = await axios.patch(
+        `http://localhost:3000/friends/${profileId}`,
+        {
+          friendId,
+        }
+      );
+      if (response.status === 200) {
+        loadFriends();
         showSuccessToast("Friend request accepted!");
       }
     } catch (error) {
@@ -105,7 +110,7 @@ export const FriendPage = () => {
                 {profileId === friend.receiverId ? (
                   <div className="flex space-x-2">
                     <button
-                      onClick={()=> handleAccept(friend._id)}
+                      onClick={() => handleAccept(friend._id)}
                       className="px-4 py-2 bg-green-500 rounded-lg hover:bg-green-600"
                     >
                       Accept
@@ -143,6 +148,11 @@ export const FriendPage = () => {
                     className="w-12 h-12 rounded-full"
                   />
                   <span>{friend.username}</span>
+                  <span>
+                    {friend.receiverId === profileId
+                      ? friend.senderId
+                      : friend.receiverId}
+                  </span>
                 </div>
               </li>
             ))}
