@@ -4,14 +4,13 @@ import { useState, useEffect } from "react";
 import { fetchOneFriend } from "../../../utils/fetchOneFriend";
 
 export const ChatUI = ({ chat, onClick, isSelected }) => {
-  // Get the current user's profileId from the URL params
   const { profileId } = useParams();
-  console.log("this is chat", chat);
-  // State to store the other participant's details
   const [otherParticipant, setOtherParticipant] = useState(null);
 
-  // Find the other participant
-  const otherParticipantId = chat.participants.find((id) => id !== profileId);
+  // Safety check to ensure chat.participants exists and is an array
+  const otherParticipantId = Array.isArray(chat?.participants)
+    ? chat.participants.find((id) => id !== profileId)
+    : null;
 
   useEffect(() => {
     if (otherParticipantId) {
@@ -25,6 +24,10 @@ export const ChatUI = ({ chat, onClick, isSelected }) => {
     }
   }, [profileId, otherParticipantId]);
 
+  if (!otherParticipantId) {
+    return null; // Render nothing if participants array is invalid
+  }
+
   return (
     <div
       className={`flex items-center p-2 mb-2 mx-2 rounded-lg cursor-pointer ${
@@ -35,7 +38,7 @@ export const ChatUI = ({ chat, onClick, isSelected }) => {
       <div className="flex items-center w-full p-2 rounded-md hover:bg-gray-600">
         <img
           className="w-10 h-10 rounded-full mx-3"
-          src={otherParticipant?.profilePic || "/avatar.png"} // Use default avatar if no match found
+          src={otherParticipant?.profilePic || "/avatar.png"}
           alt={`${otherParticipant?.username || "Unknown User"}'s profile`}
         />
         <span className="text-white text-lg">

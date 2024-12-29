@@ -271,7 +271,12 @@ exports.createNewChat = async (req, res) => {
     console.log("this is the createchat backend", chat);
     await chat.save();
 
-   
+
+    participants.forEach((participantId) => {
+      emitToUser(participantId, "newChatCreated", { chat });
+      console.log(`Emitting newChatCreated to participantId: ${participantId}`);
+    });
+
     return res.status(201).json({ chat , participants});
   } catch (error) {
     console.error("Error creating chat:", error);
