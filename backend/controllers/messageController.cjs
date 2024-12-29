@@ -11,6 +11,8 @@ const validateUser = async (profileId) => {
   }
   return user;
 };
+
+
 exports.sendFriendRequest = async (req, res) => {
   try {
     const { senderId, receiverId, username, profilePic } = req.body;
@@ -59,7 +61,7 @@ exports.sendFriendRequest = async (req, res) => {
     await receiver.save();
     await sender.save();
 
-    emitToUser(receiverId, "friendRequestSent", {
+    emitToUser(receiverId, "friendRequestReceived", {
       senderId,
       username,
       profilePic,

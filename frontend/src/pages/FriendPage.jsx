@@ -7,6 +7,7 @@ import { useSocketStore } from "../../store/useSocketStore";
 // import { useFriendsStore } from "../../store/useFriendsStore";
 import { showSuccessToast } from "../../utils/toastUtil";
 
+
 export const FriendPage = () => {
   const { isConnected, addSocketHandler, removeSocketHandler } =
     useSocketStore();
@@ -42,36 +43,38 @@ export const FriendPage = () => {
     };
 
     if (isConnected) {
-      addSocketHandler("friendRequestSent", handleFriendRequest);
+      addSocketHandler("friendRequestReceived", handleFriendRequest);
     }
 
     return () => {
       if (isConnected) {
-        removeSocketHandler("friendRequestSent", handleFriendRequest);
+        removeSocketHandler("friendRequestReceived", handleFriendRequest);
       }
     };
   }, [isConnected, addSocketHandler, removeSocketHandler, loadFriends]);
 
 
+  
+
   useEffect(() => {
     const handleSenderFriendRequest = () => {
-      
-      showSuccessToast("Friend request status updated!");
-    loadFriends()
+      showSuccessToast("Friend request sent!");
+      loadFriends(); // Fetch updated friends
     };
-
+  
     if (isConnected) {
+      removeSocketHandler("friendRequestSent", handleSenderFriendRequest); 
       addSocketHandler("friendRequestSent", handleSenderFriendRequest);
     }
-
+  
     return () => {
       if (isConnected) {
         removeSocketHandler("friendRequestSent", handleSenderFriendRequest);
       }
     };
-  }, [ isConnected , addSocketHandler, removeSocketHandler, loadFriends]);
-
-
+  }, [isConnected, addSocketHandler, removeSocketHandler, loadFriends]);
+  
+  
 
 
 
