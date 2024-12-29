@@ -92,9 +92,6 @@ The primary motivation behind building this clone is to gain a deeper understand
     npm start
     ```
 
-
-    ```
-
 ## Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request.
