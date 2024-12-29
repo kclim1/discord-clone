@@ -8,13 +8,9 @@ const MessageSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    profilePic:{
-      type:String,
-      ref:"User"
-    },
-    username:{
-      type:String,
-      ref:"User"
+    chatId:{
+      type : String,
+      ref:"SoloChat"
     },
     text: {
       type: String,

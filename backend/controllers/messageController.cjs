@@ -3,6 +3,7 @@ const axios = require("axios");
 const { getSocketByUserId, emitToUser } = require("../socket.cjs");
 const crypto = require("crypto");
 const SoloChat = require('../models/solochatschema.cjs');
+const Message = require('../models/messageSchema.cjs')
 
 const validateUser = async (profileId) => {
   const user = await User.findOne({ profileId });
@@ -322,6 +323,65 @@ exports.getFriendById = async (req, res) => {
   } catch (error) {
     console.error("Error fetching participant profile:", error);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+exports.sendMessage = async (req, res) => {
+  try {
+    const { senderId, text, chatId } = req.body;
+
+    if (text.trim() === "") {
+      return res.status(400).json({ message: "Cannot send an empty string" });
+    }
+
+    // Fetch sender details
+    const sender = await User.findOne({ profileId: senderId }).select("profilePic username");
+
+    if (!sender) {
+      return res.status(404).json({ message: "Sender not found" });
+    }
+
+    // Create and save the new message
+    const newMessage = new Message({
+      senderId,
+      text,
+      chatId,
+    });
+
+    const savedMessage = await newMessage.save();
+
+    // Include sender details manually in the response
+    res.status(201).json({
+      message: {
+        ...savedMessage.toObject(), // Include all fields of the saved message
+        sender: {
+          profilePic: sender.profilePic,
+          username: sender.username,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error sending message:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+exports.getAllMessages = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+
+    // Fetch and populate all messages for the given chatId
+    const allMessages = await Message.find({ chatId })
+      .populate({
+        path: "senderId",
+        select: "username profilePic", // Only include these fields
+      })
+      .sort({ createdAt: 1 }); // Sort by createdAt in ascending order
+
+    res.status(200).json({ allMessages });
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
