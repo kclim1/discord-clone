@@ -21,9 +21,9 @@ export const ServerIconWrapper = styled("div")(() => ({
 //   backgroundColor:"whitesmoke",
   "&:hover": {
     transform: "scale(1.2)", // Slightly enlarge the icon
-    boxShadow: `0px 4px 10px 2px rgba(255, 0, 255, 0.8)`, // Intense purple shadow
+    // boxShadow: `0px 0px 10px 2px rgba(255, 0, 255, 0.8)`, // Adjusted shadow to fit the icon
     borderRadius:"50%",
-     backgroundColor: "#6a0dad"
+    //  backgroundColor: "#6a0dad"
 
   },
 }));

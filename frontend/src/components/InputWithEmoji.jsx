@@ -53,8 +53,8 @@ export const InputWithEmoji = () => {
       console.log("Message sent successfully:", response.data);
 
       // Optionally update state or UI with the new message
-      addMessage(response.data.message); // Assuming you use Zustand for managing messages
-
+      addMessage(response.data.newMessage); // Assuming you use Zustand for managing messages
+      console.log(response.data.newMessage)
       // Clear the message input
       setMessage("");
       adjustHeight(); // Reset the textarea height
@@ -62,9 +62,10 @@ export const InputWithEmoji = () => {
       console.error("Error sending message:", error.message);
     }
   };
+ 
 
   return (
-    <div className="relative flex flex-col gap-4 m-4">
+    <div className="relative pb-8"> {/* Added mb-8 for bottom margin */}
       {/* Form wrapping the input container */}
       <form
         onSubmit={handleSubmit} // Call handleSubmit here correctly

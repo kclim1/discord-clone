@@ -1,13 +1,21 @@
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import { LogoutButton } from './LogoutButton';
 
-export const Header = function() {
-    return (
-      <div className='bg-red-300 flex justify-between'>
-        <h2 className="text-white bg-green-700 h-10 mx-8">Header here</h2>
-        <Link className='text-white bg-blue-500 p-2 mx-8' to='/login'>Login</Link> {/* Added bg-blue-500 and padding */}
-        <LogoutButton/>
-      </div>
-    );
-  };
-  
+export const Header = function () {
+  return (
+    <header className="bg-[#23272A] text-white py-2 px-2 shadow-md flex justify-between items-center">
+      {/* Logo or Title */}
+      <h1 className="text-2xl font-bold text-[#5865F2] mx-4">
+        <Link to="/" className="hover:text-[#7289DA]">
+          Chord
+        </Link>
+      </h1>
+
+      {/* Navigation Links */}
+      <nav className="flex gap-6 px-4">
+       
+        <LogoutButton />
+      </nav>
+    </header>
+  );
+};

@@ -38,12 +38,12 @@ export const ChatContainer = () => {
 
 
   useEffect(()=>{
-    console.log('this is user',user)
-  },[user])
+    console.log('this is messages',messages)
+  },[messages])
 
   return (
-    <div className="chat-container w-full h-full">
-      <div className="chat-messages w-full h-full overflow-y-auto px-7 py-2">
+    <div className="chat-container w-full h-[85vh] flex flex-col"> {/* Set height to 90% of screen height with h-[90vh] */}
+      <div className="chat-messages flex-grow px-7 py-2 overflow-y-auto"> {/* Changed to flex-grow */}
         {messages && messages.length > 0 ? (
           messages.map((message) => (
             <div key={message._id} className="message flex items-start mb-4">
@@ -71,7 +71,7 @@ export const ChatContainer = () => {
         ) : (
           <p className="text-gray-400">No messages yet.</p>
         )}
-      </div>
+      </div>     
     </div>
   );
 };
