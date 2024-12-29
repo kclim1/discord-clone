@@ -294,10 +294,10 @@ exports.getAllChat = async (req, res) => {
     const chats = await SoloChat.find({
         participants: profileId,
     });
-
-    if (!chats || chats.length === 0) {
-      return res.status(404).json({ message: "No chats found for this user." });
-    }
+   
+    // if (!chats || chats.length === 0) {
+    //   return res.status(404).json({ chats:[] });
+    // }
     // console.log("this is chats backend", chats);
     res.status(200).json(chats);
   } catch (error) {
@@ -325,9 +325,11 @@ exports.getFriendById = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
 exports.sendMessage = async (req, res) => {
   try {
-    const { senderId, text, chatId } = req.body;
+    const { senderId, text, chatId , profilePic , username } = req.body;
 
     if (text.trim() === "") {
       return res.status(400).json({ message: "Cannot send an empty string" });
@@ -345,43 +347,37 @@ exports.sendMessage = async (req, res) => {
       senderId,
       text,
       chatId,
+      profilePic,
+      username
     });
 
     const savedMessage = await newMessage.save();
 
     // Include sender details manually in the response
-    res.status(201).json({
-      message: {
-        ...savedMessage.toObject(), // Include all fields of the saved message
-        sender: {
-          profilePic: sender.profilePic,
-          username: sender.username,
-        },
-      },
-    });
+    res.status(201).json({newMessage})
   } catch (error) {
     console.error("Error sending message:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-
 exports.getAllMessages = async (req, res) => {
   try {
-    const { chatId } = req.params;
+    const { chatId  } = req.params;
+    const profileId = req.headers.profileid;
+    console.log('chatid and profileid from get all messages',chatId,profileId)
+    // Fetch messages for the chatId
+    const allMessages = await Message.find({ chatId }).sort({ createdAt: 1 });
 
-    // Fetch and populate all messages for the given chatId
-    const allMessages = await Message.find({ chatId })
-      .populate({
-        path: "senderId",
-        select: "username profilePic", // Only include these fields
-      })
-      .sort({ createdAt: 1 }); // Sort by createdAt in ascending order
+    // Fetch user details by profileId
+    const user = await User.findOne({ profileId }).select("username profilePic");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    res.status(200).json({ allMessages });
+    res.status(200).json({ allMessages, user });
   } catch (error) {
     console.error("Error fetching messages:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
