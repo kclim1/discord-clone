@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useMessagesStore } from "../../store/useMessagesStore";
+import { useSocketStore } from "../../store/useSocketStore";
 import axios from "axios";
 
 export const ChatContainer = () => {
-  const { chatId } = useParams(); // Destructure `chatId` from `useParams`
-  const { messages, setMessages } = useMessagesStore(); // Destructure `setMessages` from the store
+  const { chatId ,profileId} = useParams(); // Destructure `chatId` from `useParams`
+  const { messages, setMessages, addMessage } = useMessagesStore(); // Include addMessage for real-time updates
+  const { addSocketHandler, removeSocketHandler, isConnected } = useSocketStore(); // Socket functions
+
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -13,7 +16,7 @@ export const ChatContainer = () => {
         const response = await axios.get(
           `http://localhost:3000/messages/${chatId}`,
           {
-            headers: { profileId: "your-profile-id-here" }, // Replace with actual profileId
+            headers: { profileId: profileId }, // Replace with actual profileId
           }
         );
 
@@ -29,7 +32,31 @@ export const ChatContainer = () => {
     if (chatId) {
       fetchMessages();
     }
-  }, [chatId, setMessages]);
+  }, [chatId, setMessages,profileId]);
+
+
+  useEffect(() => {
+    const handleMessageSent = (message) => {
+      console.log("New message received:", message);
+      // Update the state only if the message belongs to the current chat
+      if (message.chatId === chatId) {
+        addMessage(message);
+      }
+    };
+
+    if (isConnected) {
+      addSocketHandler("messageSent", handleMessageSent);
+    }
+
+    // Cleanup the listener on unmount
+    return () => {
+      if (isConnected) {
+        removeSocketHandler("messageReceived", handleMessageSent);
+      }
+    };
+  }, [isConnected, chatId, addMessage, addSocketHandler, removeSocketHandler]);
+
+
 
   return (
     <div className="chat-container w-full h-[85vh] flex flex-col">

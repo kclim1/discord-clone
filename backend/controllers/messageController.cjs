@@ -2,8 +2,8 @@ const User = require("../models/userSchema.cjs");
 const axios = require("axios");
 const { getSocketByUserId, emitToUser } = require("../socket.cjs");
 const crypto = require("crypto");
-const SoloChat = require('../models/solochatschema.cjs');
-const Message = require('../models/messageSchema.cjs')
+const SoloChat = require("../models/solochatschema.cjs");
+const Message = require("../models/messageSchema.cjs");
 
 const validateUser = async (profileId) => {
   const user = await User.findOne({ profileId });
@@ -13,18 +13,21 @@ const validateUser = async (profileId) => {
   return user;
 };
 
-
 exports.sendFriendRequest = async (req, res) => {
   try {
     const { senderId, receiverId, username, profilePic } = req.body;
     const { profileId } = req.params;
 
     if (!senderId || !receiverId) {
-      return res.status(400).json({ message: "Sender and receiver IDs are required." });
+      return res
+        .status(400)
+        .json({ message: "Sender and receiver IDs are required." });
     }
 
     if (senderId === receiverId) {
-      return res.status(400).json({ message: "You cannot send a friend request to yourself." });
+      return res
+        .status(400)
+        .json({ message: "You cannot send a friend request to yourself." });
     }
 
     const sender = await User.findOne({ profileId: senderId });
@@ -50,7 +53,7 @@ exports.sendFriendRequest = async (req, res) => {
       profilePic, // Sender's profile picture
       status: "pending", // Request status
     });
-    
+
     sender.friends.push({
       senderId, // ID of the sender (current user)
       receiverId, // ID of the receiver
@@ -75,14 +78,14 @@ exports.sendFriendRequest = async (req, res) => {
       status: "pending",
     });
 
-
-    return res.status(200).json({ message: "Friend request sent successfully." });
+    return res
+      .status(200)
+      .json({ message: "Friend request sent successfully." });
   } catch (error) {
     console.error("Error sending friend request:", error.message);
     res.status(500).json({ message: "Failed to send friend request." });
   }
 };
-
 
 exports.acceptFriendRequest = async (req, res) => {
   try {
@@ -93,7 +96,10 @@ exports.acceptFriendRequest = async (req, res) => {
     }
 
     // Step 1: Locate the friend request in the receiver's document
-    const receiver = await User.findOne({ "friends._id": friendId }, { "friends.$": 1 });
+    const receiver = await User.findOne(
+      { "friends._id": friendId },
+      { "friends.$": 1 }
+    );
 
     if (!receiver) {
       return res.status(404).json({ message: "Friend request not found." });
@@ -112,7 +118,9 @@ exports.acceptFriendRequest = async (req, res) => {
     );
 
     if (updateReceiver.matchedCount === 0) {
-      return res.status(404).json({ message: "Failed to update receiver's friend status." });
+      return res
+        .status(404)
+        .json({ message: "Failed to update receiver's friend status." });
     }
 
     // Step 3: Update the sender's friend object
@@ -126,10 +134,14 @@ exports.acceptFriendRequest = async (req, res) => {
     );
 
     if (updateSender.matchedCount === 0) {
-      return res.status(404).json({ message: "Failed to update sender's friend status." });
+      return res
+        .status(404)
+        .json({ message: "Failed to update sender's friend status." });
     }
 
-    console.log(`Friend request ${friendId} accepted for both sender and receiver.`);
+    console.log(
+      `Friend request ${friendId} accepted for both sender and receiver.`
+    );
 
     // Step 4: Respond with success
     res.status(200).json({
@@ -143,8 +155,6 @@ exports.acceptFriendRequest = async (req, res) => {
   }
 };
 
-
-
 exports.rejectFriendRequest = async (req, res) => {
   try {
     const { friendId } = req.body;
@@ -154,7 +164,10 @@ exports.rejectFriendRequest = async (req, res) => {
     }
 
     // Step 1: Locate the friend request in the receiver's document
-    const receiver = await User.findOne({ "friends._id": friendId }, { "friends.$": 1 });
+    const receiver = await User.findOne(
+      { "friends._id": friendId },
+      { "friends.$": 1 }
+    );
 
     if (!receiver) {
       return res.status(404).json({ message: "Friend request not found." });
@@ -173,7 +186,9 @@ exports.rejectFriendRequest = async (req, res) => {
     );
 
     if (updateReceiver.matchedCount === 0) {
-      return res.status(404).json({ message: "Failed to update receiver's friend list." });
+      return res
+        .status(404)
+        .json({ message: "Failed to update receiver's friend list." });
     }
 
     // Step 3: Remove the friend request from the sender's `friends` array
@@ -187,14 +202,19 @@ exports.rejectFriendRequest = async (req, res) => {
     );
 
     if (updateSender.matchedCount === 0) {
-      return res.status(404).json({ message: "Failed to update sender's friend list." });
+      return res
+        .status(404)
+        .json({ message: "Failed to update sender's friend list." });
     }
 
-    console.log(`Friend request ${friendId} rejected and removed for both sender and receiver.`);
+    console.log(
+      `Friend request ${friendId} rejected and removed for both sender and receiver.`
+    );
 
     // Step 4: Respond with success
     res.status(200).json({
-      message: "Friend request rejected and removed for both sender and receiver.",
+      message:
+        "Friend request rejected and removed for both sender and receiver.",
     });
   } catch (error) {
     console.error("Error rejecting friend request:", error.message);
@@ -203,9 +223,6 @@ exports.rejectFriendRequest = async (req, res) => {
     });
   }
 };
-
-
-
 
 exports.createNewChat = async (req, res) => {
   try {
@@ -249,19 +266,17 @@ exports.createNewChat = async (req, res) => {
     console.log("this is the createchat backend", chat);
     await chat.save();
 
-
     participants.forEach((participantId) => {
       emitToUser(participantId, "newChatCreated", { chat });
       console.log(`Emitting newChatCreated to participantId: ${participantId}`);
     });
 
-    return res.status(201).json({ chat , participants});
+    return res.status(201).json({ chat, participants });
   } catch (error) {
     console.error("Error creating chat:", error);
     return res.status(500).json({ error: "Failed to create chat" });
   }
 };
-
 
 exports.getAllChat = async (req, res) => {
   try {
@@ -289,7 +304,9 @@ exports.sendMessage = async (req, res) => {
     }
 
     // Find the sender's details
-    const sender = await User.findOne({ profileId: senderId }).select("username profilePic");
+    const sender = await User.findOne({ profileId: senderId }).select(
+      "username profilePic"
+    );
     if (!sender) {
       return res.status(404).json({ message: "Sender not found" });
     }
@@ -310,18 +327,16 @@ exports.sendMessage = async (req, res) => {
 
     // Notify all participants except the sender
     chat.participants.forEach((participantId) => {
-      if (participantId !== senderId) {
-        emitToUser(participantId, "messageReceived", {
-          senderId,
-          text,
-          chatId,
-          createdAt: savedMessage.createdAt,
-          sender: {
-            username: sender.username,
-            profilePic: sender.profilePic,
-          },
-        });
-      }
+      emitToUser(participantId, "messageSent", {
+        senderId,
+        text,
+        chatId,
+        createdAt: savedMessage.createdAt,
+        sender: {
+          username: sender.username,
+          profilePic: sender.profilePic,
+        },
+      });
     });
 
     // Respond to the sender with the saved message
@@ -344,9 +359,7 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
-
-
-//data used to render chat UI component. 
+//data used to render chat UI component.
 exports.getAllMessages = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -362,9 +375,9 @@ exports.getAllMessages = async (req, res) => {
     // Map through allMessages and attach sender details
     const messagesWithSenderDetails = await Promise.all(
       allMessages.map(async (message) => {
-        const sender = await User.findOne({ profileId: message.senderId }).select(
-          "username profilePic"
-        );
+        const sender = await User.findOne({
+          profileId: message.senderId,
+        }).select("username profilePic");
         return {
           ...message.toObject(),
           sender: sender || { username: "Unknown", profilePic: "/avatar.png" },
@@ -372,11 +385,13 @@ exports.getAllMessages = async (req, res) => {
       })
     );
 
-    console.log("get all messages with sender details", messagesWithSenderDetails);
+    console.log(
+      "get all messages with sender details",
+      messagesWithSenderDetails
+    );
     res.status(200).json({ allMessages: messagesWithSenderDetails });
   } catch (error) {
     console.error("Error fetching messages:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
