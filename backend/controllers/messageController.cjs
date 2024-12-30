@@ -266,12 +266,14 @@ exports.createNewChat = async (req, res) => {
 exports.getAllChat = async (req, res) => {
   try {
     const profileId = req.params.profileId;
-    // console.log("This is the user:", profileId);
 
+    // Fetch chats where the profileId is a participant
     const chats = await SoloChat.find({
-        participants: profileId,
+      participants: profileId,
     });
- 
+
+    // Return the chats to the frontend
+    res.status(200).json(chats);
   } catch (error) {
     console.error("Error fetching all chats:", error);
     res.status(500).json({ error: "Failed to fetch chats. Please try again." });
