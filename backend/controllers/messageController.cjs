@@ -280,43 +280,64 @@ exports.getAllChat = async (req, res) => {
   }
 };
 
-
 exports.sendMessage = async (req, res) => {
   try {
     const { senderId, text, chatId } = req.body;
 
-    if (text.trim() === "") {
+    if (!text.trim()) {
       return res.status(400).json({ message: "Cannot send an empty string" });
     }
 
-    // Fetch sender details using senderId
-    const sender = await User.findOne({ profileId: senderId }).select("profilePic username");
-
+    // Find the sender's details
+    const sender = await User.findOne({ profileId: senderId }).select("username profilePic");
     if (!sender) {
       return res.status(404).json({ message: "Sender not found" });
     }
 
-    // Create and save the new message with sender details
+    // Create and save the message
     const newMessage = new Message({
       senderId,
       text,
       chatId,
-      profilePic: sender.profilePic, // Add profilePic from sender
-      username: sender.username, // Add username from sender
     });
-
     const savedMessage = await newMessage.save();
 
-    // Include sender details in the response
-    const messageWithSenderDetails = {
-      ...savedMessage.toObject(),
-      sender: {
-        username: sender.username,
-        profilePic: sender.profilePic,
-      },
-    };
+    // Fetch the chat participants
+    const chat = await SoloChat.findOne({ chatId }).select("participants");
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
 
-    res.status(201).json({ message: messageWithSenderDetails });
+    // Notify all participants except the sender
+    chat.participants.forEach((participantId) => {
+      if (participantId !== senderId) {
+        emitToUser(participantId, "messageReceived", {
+          senderId,
+          text,
+          chatId,
+          createdAt: savedMessage.createdAt,
+          sender: {
+            username: sender.username,
+            profilePic: sender.profilePic,
+          },
+        });
+      }
+    });
+
+    // Respond to the sender with the saved message
+    res.status(201).json({
+      message: {
+        _id: savedMessage._id,
+        senderId,
+        text,
+        chatId,
+        createdAt: savedMessage.createdAt,
+        sender: {
+          username: sender.username,
+          profilePic: sender.profilePic,
+        },
+      },
+    });
   } catch (error) {
     console.error("Error sending message:", error);
     res.status(500).json({ message: "Internal server error" });
