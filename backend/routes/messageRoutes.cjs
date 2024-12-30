@@ -11,8 +11,6 @@ router.post('/messages', messageController.sendMessage)
 router.get('/messages/:chatId',messageController.getAllMessages)
 
 router.get('/chats/:profileId',messageController.getAllChat)  //fetches all chat user is involved in 
-// router.get('/friends/:profileId', messageController.getFriends); 
-// router.get('/friends', messageController.getFriendById); //fetches a specific friends user obj 
 router.patch('/friends/:profileId',messageController.acceptFriendRequest)
 router.delete('/friends/:profileId',messageController.rejectFriendRequest)
 

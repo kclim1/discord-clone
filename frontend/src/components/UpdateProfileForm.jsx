@@ -29,7 +29,7 @@ export const UpdateProfileForm = () => {
           `http://localhost:3000/dashboard/${user.profileId}`,
           { username, email, password, profilePic , profileId} 
         );
-        console.log('response',response)
+        console.log('updated profile',response)
         if(response.status === 200){
           showSuccessToast("Profile successfully updated!");
 

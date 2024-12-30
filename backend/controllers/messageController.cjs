@@ -83,29 +83,6 @@ exports.sendFriendRequest = async (req, res) => {
   }
 };
 
-// fetches the friends list from user document. this array is filtered in friends page into pending and accepted
-
-exports.getFriends = async (req, res) => {
-  try {
-    const { profileId } = req.params;
-
-    if (!profileId) {
-      return res.status(400).json({ message: "Profile ID is required." });
-    }
-
-    // Find the user by profileId
-    const user = await User.findOne({ profileId });
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
-    }
-    return res.status(200).json(user.friends);
-  } catch (error) {
-    console.error("Error fetching friends:", error);
-    res
-      .status(500)
-      .json({ message: "An error occurred while fetching friends." });
-  }
-};
 
 exports.acceptFriendRequest = async (req, res) => {
   try {
@@ -307,77 +284,81 @@ exports.getAllChat = async (req, res) => {
 };
 
 
-exports.getFriendById = async (req, res) => {
-  try {
-    const {profileId} = req.params
-    const { participantId } = req.body; // Extract the participantId from the route parameters
-    console.log("Fetching profile for participantId:", profileId);
-
-    // Query the User collection for the participant's profile
-    const participantProfile = await User.findOne({ profileId: participantId }); 
-
-    if (participantProfile) {
-      return res.status(200).json(participantProfile);
-    }
-    return res.status(404).json({ message: "Participant profile not found" });
-  } catch (error) {
-    console.error("Error fetching participant profile:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-
 exports.sendMessage = async (req, res) => {
   try {
-    const { senderId, text, chatId , profilePic , username } = req.body;
+    const { senderId, text, chatId } = req.body;
 
     if (text.trim() === "") {
       return res.status(400).json({ message: "Cannot send an empty string" });
     }
 
-    // Fetch sender details
+    // Fetch sender details using senderId
     const sender = await User.findOne({ profileId: senderId }).select("profilePic username");
 
     if (!sender) {
       return res.status(404).json({ message: "Sender not found" });
     }
 
-    // Create and save the new message
+    // Create and save the new message with sender details
     const newMessage = new Message({
       senderId,
       text,
       chatId,
-      profilePic,
-      username
+      profilePic: sender.profilePic, // Add profilePic from sender
+      username: sender.username, // Add username from sender
     });
 
     const savedMessage = await newMessage.save();
 
-    // Include sender details manually in the response
-    res.status(201).json({newMessage})
+    // Include sender details in the response
+    const messageWithSenderDetails = {
+      ...savedMessage.toObject(),
+      sender: {
+        username: sender.username,
+        profilePic: sender.profilePic,
+      },
+    };
+
+    res.status(201).json({ message: messageWithSenderDetails });
   } catch (error) {
     console.error("Error sending message:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
+
+
+//data used to render chat UI component. 
 exports.getAllMessages = async (req, res) => {
   try {
-    const { chatId  } = req.params;
-    const profileId = req.headers.profileid;
-    console.log('chatid and profileid from get all messages',chatId,profileId)
+    const { chatId } = req.params;
+
     // Fetch messages for the chatId
     const allMessages = await Message.find({ chatId }).sort({ createdAt: 1 });
 
-    // Fetch user details by profileId
-    const user = await User.findOne({ profileId }).select("username profilePic");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    // If no messages are found, return an empty response
+    if (!allMessages || allMessages.length === 0) {
+      return res.status(200).json({ allMessages: [] });
     }
 
-    res.status(200).json({ allMessages, user });
+    // Map through allMessages and attach sender details
+    const messagesWithSenderDetails = await Promise.all(
+      allMessages.map(async (message) => {
+        const sender = await User.findOne({ profileId: message.senderId }).select(
+          "username profilePic"
+        );
+        return {
+          ...message.toObject(),
+          sender: sender || { username: "Unknown", profilePic: "/avatar.png" },
+        };
+      })
+    );
+
+    console.log("get all messages with sender details", messagesWithSenderDetails);
+    res.status(200).json({ allMessages: messagesWithSenderDetails });
   } catch (error) {
     console.error("Error fetching messages:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+

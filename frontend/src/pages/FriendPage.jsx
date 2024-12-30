@@ -24,10 +24,10 @@ export const FriendPage = () => {
     }
   }, [profileId, setFriendList]);
 
-  // useEffect(() => {
-  //   console.log("Friend List:", friendList);
-  // }, [friendList]);
-//for debugging
+  useEffect(() => {
+    console.log("Friend List:", friendList);
+  }, [friendList]);
+// for debugging
 
 
   // Fetch friends on component mount or when profileId changes

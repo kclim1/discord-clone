@@ -38,38 +38,56 @@ exports.getProfile = async (req, res) => {
  * Lists a user's entire list of friends from their user doc (pending and accepted).
  * Uses req.profile (already loaded from DB).
  */
+
+
 exports.getFriends = async (req, res) => {
-    try {
-      if (!req.profile) {
-        return res.status(404).json({ message: "User not found." });
-      }
-      return res.status(200).json(req.profile.friends || []);
-    } catch (error) {
-      console.error("Error fetching friends:", error);
-      return res.status(500).json({ message: "An error occurred while fetching friends." });
+  try {
+    const { profileId } = req.params;
+
+    if (!profileId) {
+      return res.status(400).json({ message: "Profile ID is required." });
     }
-  };
+
+    // Find the user by profileId
+    const user = await User.findOne({ profileId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    console.log('user friends backend :',user.friends)
+    return res.status(200).json(user.friends);
+  } catch (error) {
+    console.error("Error fetching friends:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching friends." });
+  }
+};
+
 
 /**
  * Retrieve a single friend object by friendId or something similar.
  * For example, you might pass ?friendId=someId or put it in the route path.
  */
-exports.getFriendById = async (req, res) => {
+
+
+  exports.getFriendById = async (req, res) => {
     try {
       const friendId = req.params.friendId || req.query.friendId;
       if (!req.profile) {
         return res.status(404).json({ message: "User not found." });
       }
-
   
-      // In your original code, you had participantId in the body. 
-      // This is an example approach to find a friend from the user's friend array:
-      const friend = req.profile.friends.find((f) => String(f.senderId) === friendId);
+      // Check for both senderId and receiverId
+      const friend = req.profile.friends.find((f) => {
+        const isSender = String(f.senderId) === friendId;
+        const isReceiver = String(f.receiverId) === friendId;
+        return isSender || isReceiver;
+      });
+  
       if (!friend) {
         return res.status(404).json({ message: "Friend not found in this user's friend list." });
       }
-
-  
+      console.log('this is getfriendbyid',friend)
       return res.status(200).json(friend);
     } catch (error) {
       console.error("Error fetching friend by ID:", error);
