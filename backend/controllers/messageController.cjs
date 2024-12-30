@@ -271,12 +271,7 @@ exports.getAllChat = async (req, res) => {
     const chats = await SoloChat.find({
         participants: profileId,
     });
-   
-    // if (!chats || chats.length === 0) {
-    //   return res.status(404).json({ chats:[] });
-    // }
-    // console.log("this is chats backend", chats);
-    res.status(200).json(chats);
+ 
   } catch (error) {
     console.error("Error fetching all chats:", error);
     res.status(500).json({ error: "Failed to fetch chats. Please try again." });

@@ -4,14 +4,12 @@ import { useState, useRef } from "react";
 import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useMessagesStore } from "../../store/useMessagesStore";
 
 export const InputWithEmoji = () => {
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const textAreaRef = useRef(null); // Ref for textarea
   const { profileId, chatId } = useParams();
-  const addMessage = useMessagesStore((state) => state.addMessage);
 
   // Adjust textarea height dynamically
   const adjustHeight = () => {
@@ -48,9 +46,8 @@ export const InputWithEmoji = () => {
 
       console.log("Message sent successfully:", response.data);
 
-      // Optionally update state or UI with the new message
-      addMessage(response.data.newMessage); // Assuming you use Zustand for managing messages
-      console.log(response.data.newMessage)
+    
+
       // Clear the message input
       setMessage("");
       adjustHeight(); // Reset the textarea height
