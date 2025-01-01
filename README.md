@@ -1,4 +1,4 @@
-# Chord (og)
+# Chord 
 
 Welcome to **Chord**, a personal project aimed at exploring and understanding the underlying technologies that power real-time chat applications like Discord. This project serves as both a learning tool and a platform to experiment with modern web development and real-time communication features.
 
