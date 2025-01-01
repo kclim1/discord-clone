@@ -1,7 +1,7 @@
 import { DirectMessagesButton } from "./DirectMessagesButton";
 import { ServerIconTooltip, ServerIconWrapper } from "./AddServerIcon";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { ServerIcons } from "./ServerIcons";
+// import { ServerIcons } from "./ServerIcons";
 
 export const ServerListSidebar = () => {
   return (
@@ -15,7 +15,7 @@ export const ServerListSidebar = () => {
   }}>
         
         {/* Example Server Icon */}
-        <ServerIcons/>
+        {/* <ServerIcons/> */}
 
         
         
