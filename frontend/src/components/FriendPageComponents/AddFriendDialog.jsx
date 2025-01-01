@@ -8,10 +8,10 @@ import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import axios from "axios";
-import { showSuccessToast, showErrorToast } from "../../utils/toastUtil";
+import { showSuccessToast, showErrorToast } from "../../../utils/toastUtil";
 import { useParams } from "react-router-dom";
-import { useProfileStore } from "../../store/useProfileStore";
-import { useFriendsStore } from "../../store/useFriendsStore";
+import { useProfileStore } from "../../../store/useProfileStore";
+import { useFriendsStore } from "../../../store/useFriendsStore";
 
 export const AddFriendDialog = () => {
   const { setSenderId } = useFriendsStore(); // Zustand store for sender ID

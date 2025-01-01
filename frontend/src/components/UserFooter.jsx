@@ -3,7 +3,7 @@ import HeadphonesIcon from "@mui/icons-material/Headphones";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Tooltip from "@mui/material/Tooltip";
 import { useParams, useNavigate } from "react-router-dom";
-import { AddFriendDialog } from "./AddFriendDialog";
+import { AddFriendDialog } from "./FriendPageComponents/AddFriendDialog";
 import { useProfileStore } from "../../store/useProfileStore";
 
 export const UserFooter = () => {
