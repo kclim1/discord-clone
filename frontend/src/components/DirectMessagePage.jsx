@@ -1,5 +1,5 @@
 import { InputWithEmoji } from "../components/InputWithEmoji";
-import { ChatContainer } from "./ChatContainer";
+import { ChatContainer } from "./MessageComponents/ChatContainer";
 
 export const DirectMessagePage = () => {
   

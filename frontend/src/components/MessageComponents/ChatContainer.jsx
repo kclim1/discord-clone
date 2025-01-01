@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useMessagesStore } from "../../store/useMessagesStore";
-import { useSocketStore } from "../../store/useSocketStore";
+import { useMessagesStore } from "../../../store/useMessagesStore";
+import { useSocketStore } from "../../../store/useSocketStore";
 import axios from "axios";
 
 export const ChatContainer = () => {
