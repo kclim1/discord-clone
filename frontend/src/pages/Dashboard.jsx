@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { Header } from "../components/Header";
+import { Header } from "../components/Misc/Header";
 import { ServerListSidebar } from "../components/ServerListSidebar";
 import { UserFooter } from "../components/UserFooter";
 import { Toaster } from "sonner";
-import { DirectMessageList } from "../components/DirectMessageList";
+import { DirectMessageList } from "../components/MessageComponents/DirectMessageList";
 import { fetchProfile } from "../../utils/fetchProfile";
 import { fetchFriends } from "../../utils/fetchFriends"; // Import fetchFriends
 import { useParams } from "react-router-dom";

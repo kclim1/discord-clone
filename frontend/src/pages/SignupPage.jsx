@@ -1,7 +1,6 @@
 
-
-import { Footer } from "../components/Footer";
-import { Header } from "../components/Header";
+import { Footer } from "../components/Misc/Footer";
+import { Header } from "../components/Misc/Header";
 import { SignupForm } from "../components/SignupForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faGoogle } from "@fortawesome/free-brands-svg-icons";

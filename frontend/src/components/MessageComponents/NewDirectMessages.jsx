@@ -1,6 +1,6 @@
 // NewDirectMessage.jsx
-import { AddOnePerson } from "./FriendPageComponents/AddOnePerson";
-import { useCreateChatStore } from "../../store/useCreateChatStore";
+import { AddOnePerson } from "../FriendPageComponents/AddOnePerson";
+import { useCreateChatStore } from "../../../store/useCreateChatStore";
 
 export const NewDirectMessage = () => {
   const { isAddOnePersonOpen, openAddOnePerson } = useCreateChatStore();
