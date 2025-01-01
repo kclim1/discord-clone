@@ -6,17 +6,6 @@ const GlobalSnackbar = () => {
 
   return (
     <div>
-        {/* buttons to test snackbars  */}
-      {/* <button
-        onClick={() => useSnackbarStore.getState().setSnackbar({ message: 'This is an informational message', severity: 'info' })}
-      >
-        Show Info Snackbar
-      </button>
-      <button
-        onClick={() => useSnackbarStore.getState().setSnackbar({ message: 'This is an error message', severity: 'error' })}
-      >
-        Show Error Snackbar
-      </button> */}
       
       <Snackbar
         open={open}

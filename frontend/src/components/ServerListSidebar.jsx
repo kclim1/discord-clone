@@ -1,5 +1,5 @@
-import { DirectMessagesButton } from "./DirectMessagesButton";
-import { ServerIconTooltip, ServerIconWrapper } from "./AddServerIcon";
+import { DirectMessagesButton } from "../components/MessageComponents/DirectMessagesButton";
+import { ServerIconTooltip, ServerIconWrapper } from "./Misc/AddServerIcon";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 // import { ServerIcons } from "./ServerIcons";
 
