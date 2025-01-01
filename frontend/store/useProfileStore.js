@@ -1,5 +1,4 @@
 import {create} from 'zustand'
-// import { useParams } from 'react-router-dom';
 
 export const useProfileStore = create((set) => ({ 
     
