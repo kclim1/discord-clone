@@ -76,6 +76,22 @@ export const FriendPage = () => {
     };
   }, [isConnected, addSocketHandler, removeSocketHandler, loadFriends]);
   
+  useEffect(() => {
+    const handleFriendRequestAccepted = () => {
+      showSuccessToast("Friend request accepted!");
+      loadFriends(); // Fetch updated friends
+    };
+  
+    if (isConnected) {
+      addSocketHandler("friendRequestAccepted", handleFriendRequestAccepted);
+    }
+  
+    return () => {
+      if (isConnected) {
+        removeSocketHandler("friendRequestAccepted", handleFriendRequestAccepted);
+      }
+    };
+  }, [isConnected, addSocketHandler, removeSocketHandler, loadFriends]);
   
 
 

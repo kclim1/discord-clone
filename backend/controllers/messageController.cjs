@@ -87,6 +87,7 @@ exports.sendFriendRequest = async (req, res) => {
   }
 };
 
+
 exports.acceptFriendRequest = async (req, res) => {
   try {
     const { friendId } = req.body;
@@ -109,7 +110,7 @@ exports.acceptFriendRequest = async (req, res) => {
     const friendRequest = receiver.friends[0];
     const { senderId, receiverId } = friendRequest;
 
-    console.log(`Found friend request: ${friendRequest}`);
+    console.log(`Found friend request: ${JSON.stringify(friendRequest)}`);
 
     // Step 2: Update the receiver's friend object
     const updateReceiver = await User.updateOne(
@@ -126,11 +127,10 @@ exports.acceptFriendRequest = async (req, res) => {
     // Step 3: Update the sender's friend object
     const updateSender = await User.updateOne(
       {
-        profileId: senderId, // Locate the sender
-        "friends.senderId": senderId,
-        "friends.receiverId": receiverId,
+        profileId: senderId, // Locate the sender's document
+        "friends.receiverId": receiverId, // Match the receiver in the sender's friends list
       },
-      { $set: { "friends.$.status": "accepted" } }
+      { $set: { "friends.$.status": "accepted" } } // Update the matched friend's status
     );
 
     if (updateSender.matchedCount === 0) {
@@ -143,17 +143,33 @@ exports.acceptFriendRequest = async (req, res) => {
       `Friend request ${friendId} accepted for both sender and receiver.`
     );
 
-    // Step 4: Respond with success
-    res.status(200).json({
+    // Step 4: Emit real-time updates to both users
+    emitToUser(senderId, "friendRequestAccepted", {
+      friendId,
+      senderId,
+      receiverId,
+      status: "accepted",
+    });
+
+    emitToUser(receiverId, "friendRequestAccepted", {
+      friendId,
+      senderId,
+      receiverId,
+      status: "accepted",
+    });
+
+    // Step 5: Respond with success
+    return res.status(200).json({
       message: "Friend request accepted for both sender and receiver.",
     });
   } catch (error) {
     console.error("Error accepting friend request:", error.message);
-    res.status(500).json({
+    return res.status(500).json({
       message: "An error occurred while accepting the friend request.",
     });
   }
 };
+
 
 exports.rejectFriendRequest = async (req, res) => {
   try {
