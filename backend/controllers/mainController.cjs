@@ -71,7 +71,6 @@ exports.updateProfile = async (req, res) => {
     console.log("update complete");
   } catch (error) {
     console.error("Error updating profile:", error);
-    console.log("i am safe")
     res.status(500).json({ message: "Failed to update profile" });
   }
 };
