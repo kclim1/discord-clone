@@ -58,4 +58,10 @@ server.listen(port, () => {
   console.log(`Servers running on port ${port}`);
 });
 
-module.exports = { server }; // Export server if needed elsewhere
+
+
+app.get("/health", (req, res) => {
+  res.json({ message: "OK" });
+});
+
+module.exports = { server , app}; // Export server if needed elsewhere
