@@ -20,7 +20,7 @@ export const LoginPage = function () {
             Don&apos;t have an account? <a className="text-[#7770d6] hover:text-[#b8b3f5]" href="/signup"> Sign up for free</a>
           </span>
 
-          <a href={`${import.meta.env.VITE_BACKEND_ROUTE}/auth/github`}>Login with GitHub
+          <a href={`${import.meta.env.VITE_BACKEND_ROUTE}/auth/github`}>
           <button className="w-full text-white bg-neutral-700 hover:bg-neutral-600 border border-neutral-400 rounded-xl py-3 px-4 mb-4 text-md">
             <FontAwesomeIcon icon={faGithub} className="mr-2" />
             Continue with GitHub

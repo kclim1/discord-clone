@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { Footer } from '../components/Misc/Footer';
 
 export const App = () => {
   return (
@@ -31,9 +32,7 @@ export const App = () => {
       </main>
 
       {/* Footer Section */}
-      <footer className="bg-neutral-800 py-4 text-center text-gray-500">
-        <p>&copy; 2024 Chord. All rights reserved.</p>
-      </footer>
+     <Footer/>
 
       <Outlet />
     </div>
