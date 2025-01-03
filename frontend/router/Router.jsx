@@ -5,34 +5,57 @@ import { Dashboard } from "../src/pages/Dashboard";
 import { App } from "../src/pages/Homepage";
 import { ProfilePage } from "../src/pages/ProfilePage";
 import { ErrorPage } from "../src/pages/ErrorPage";
-import { DirectMessagePage } from "../src/components/MessageComponents/DirectMessagePage"
-// import { FriendRequestList } from "../src/pages/FriendRequestPage";
+import { DirectMessagePage } from "../src/components/MessageComponents/DirectMessagePage";
 import { FriendPage } from "../src/pages/FriendPage";
-// import { NewDashboard } from "../src/pages/NewDashboard";
+import { ProtectedRoute } from "../src/pages/ProtectedRoute.jsx"; 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    errorElement:<ErrorPage/>
+    errorElement: <ErrorPage />,
   },
-//   {
-//     path:'/error',
-//     element:<Authenticated404/>
-//   },
   {
     path: "/login",
     element: <LoginPage />,
   },
-  { path: "/signup", element: <SignupPage /> },
+  {
+    path: "/signup",
+    element: <SignupPage />,
+  },
   {
     path: "/dashboard/:profileId",
-    element: <Dashboard />,
+    element: (
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
     children: [
-      { path: "profile", element: <ProfilePage /> },
-      { path: "direct-messages/:chatId", element: <DirectMessagePage /> },
-      {path: "friends",element:<FriendPage/>}
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "direct-messages/:chatId",
+        element: (
+          <ProtectedRoute>
+            <DirectMessagePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "friends",
+        element: (
+          <ProtectedRoute>
+            <FriendPage />
+          </ProtectedRoute>
+        ),
+      },
     ],
-  }
+  },
 ]);
 
 export default router;

@@ -111,15 +111,24 @@ exports.getProfile = async (req, res) => {
 
 
 exports.checkSession = (req, res) => {
-  if (req.isAuthenticated()) {
-    res.status(200).json({
-      isAuthenticated: true,
-      user: req.user,
-    });
-  } else {
-    res.status(401).json({
+  try {
+    if (req.isAuthenticated()) {
+      res.status(200).json({
+        isAuthenticated: true,
+        profileId: req.user.profileId, 
+        message: "User is authenticated",
+      });
+    } else {
+      res.status(401).json({
+        isAuthenticated: false,
+        message: "User is not authenticated",
+      });
+    }
+  } catch (error) {
+    console.error("Error checking session:", error);
+    res.status(500).json({
       isAuthenticated: false,
-      message: 'User is not authenticated',
+      message: "An error occurred while checking authentication status.",
     });
   }
 };
