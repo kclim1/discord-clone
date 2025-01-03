@@ -22,14 +22,15 @@ export const SignupPage = function () {
             Already have an account? Sign in 
           </span>
 
-          <a href="http://localhost:3000/auth/github">
+          <a href={`${import.meta.env.VITE_BACKEND_ROUTE}/auth/github`}>
           <button className="w-full text-white bg-neutral-700 hover:bg-neutral-600 border border-neutral-400 rounded-xl py-3 px-4 mb-4 text-md">
             <FontAwesomeIcon icon={faGithub} className="mr-2" />
             Continue with GitHub
           </button>
           </a>
 
-          <a href="http://localhost:3000/auth/google">
+      
+          <a href={`${import.meta.env.VITE_BACKEND_ROUTE}/auth/google`}>
             <button className="w-full text-white bg-neutral-700 hover:bg-neutral-600 border border-neutral-400 rounded-xl py-3 px-4 mb-6 text-md">
               <FontAwesomeIcon icon={faGoogle} className="mr-2" />
               Continue with Google

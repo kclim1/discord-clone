@@ -12,15 +12,13 @@ export const ProtectedRoute = ({children}) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        console.log("🔄 Checking session...");
         const response = await fetchSession();
 
         // ✅ Debugging to ensure state updates correctly
-        console.log("✅ Response received in ProtectedRoute:", response);
 
         setUser(response);
       } catch (error) {
-        console.error("❌ Error verifying session:", error);
+        console.error(" Error verifying session:", error);
       } finally {
         setIsLoading(false);
       }
@@ -31,7 +29,6 @@ export const ProtectedRoute = ({children}) => {
 
   // ✅ Log state changes for debugging
   useEffect(() => {
-    console.log("📊 Current State: ", { isAuthenticated, profileId });
   }, [isAuthenticated, profileId]);
 
   // ✅ If still loading, show spinner

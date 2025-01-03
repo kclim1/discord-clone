@@ -117,7 +117,7 @@ export const FriendPage = () => {
   // Handle reject friend request
   const handleReject = async (friendId) => {
     try {
-      await axios.delete(`http://localhost:3000/friends/${profileId}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_ROUTE}/friends/${profileId}`, {
         data: { friendId },
       });
       showSuccessToast("Friend request rejected!");

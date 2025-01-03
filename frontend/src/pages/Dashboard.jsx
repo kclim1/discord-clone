@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Header } from "../components/Misc/Header";
-import { ServerListSidebar } from "../components/ServerListSidebar";
+// import { ServerListSidebar } from "../components/ServerListSidebar";
 import { UserFooter } from "../components/UserFooter";
 import { Toaster } from "sonner";
 import { DirectMessageList } from "../components/MessageComponents/DirectMessageList";
@@ -70,8 +70,8 @@ export const Dashboard = () => {
     <div className="header-container flex flex-col h-screen overflow-hidden">
       <Header />
       <Toaster />
-      <div className="dashboard-container flex overflow-hidden">
-        <ServerListSidebar />
+      <div className="dashboard-container flex overflow-hidden h-screen">
+        {/* <ServerListSidebar /> */}
         <div className="channel-container flex flex-col justify-between bg-[#2f3136]">
           <div className="text-channels bg-[#2f3136] text-white flex-grow ">
             <DirectMessageList />
