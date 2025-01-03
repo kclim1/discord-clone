@@ -14,13 +14,12 @@ export const ChatContainer = () => {
     const fetchMessages = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/messages/${chatId}`,
+          `${import.meta.env.VITE_BACKEND_ROUTE}/${chatId}`,
           {
             headers: { profileId }, // Pass the profileId in the headers
           }
         );
 
-        console.log("Fetched messages response:", response.data);
 
         // Set fetched messages to Zustand store
         setMessages(response.data.allMessages);
@@ -37,7 +36,6 @@ export const ChatContainer = () => {
   // Listen for real-time message events
   useEffect(() => {
     const handleMessageSent = (message) => {
-      console.log("New message received:", message);
       // Only update messages if the new message belongs to the current chat
       if (message.chatId === chatId) {
         addMessage(message);

@@ -38,7 +38,7 @@ export const InputWithEmoji = () => {
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent the default form submission behavior
     try {
-      const response = await axios.post("http://localhost:3000/messages", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_ROUTE}/messages`, {
         text: message, // The message text
         senderId: profileId, // Assuming you have the sender's profileId
         chatId, // Assuming chatId is available from useParams or props
