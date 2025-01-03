@@ -1,6 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20");
 const User = require("../models/userSchema.cjs");
+require("dotenv").config();
 
 const googleStrategy = () => {
   passport.use(
@@ -8,7 +9,7 @@ const googleStrategy = () => {
       {
         clientID: process.env.GOOGLE_CLIENTID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/auth/google/callback",
+        callbackURL: `${process.env.BACKEND_ROUTE}/auth/google/callback`,
       },
       async (accessToken, refreshToken, profile, cb) => {
         try {
@@ -29,7 +30,6 @@ const googleStrategy = () => {
 
             await googleUser.save();
           }
-          // console.log("google auth done");
           cb(null, googleUser);
         } catch (error) {
           cb(error);

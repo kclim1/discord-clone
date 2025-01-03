@@ -7,17 +7,15 @@ const userSockets = new Map(); // Map<profileId, Set<socketId>>
 const initializeSocket = (server) => {
   io = socketIo(server, {
     cors: {
-      origin: `${process.env.FRONTEND_ROUTE}`, // Update to match your frontend URL
+      origin: `${process.env.FRONTEND_ROUTE}`, 
       methods: ["GET", "POST"],
     },
   });
 
   io.on("connection", (socket) => {
-    console.log(`Socket connected: ${socket.id}`);
 
     // Register the user's profileId and associate with their socket
     socket.on("register", (profileId) => {
-      console.log(`Registering profileId ${profileId} with socket ${socket.id}`);
 
       // Add the socket to the user's set of sockets
       if (userSockets.has(profileId)) {
@@ -30,12 +28,10 @@ const initializeSocket = (server) => {
     // Handle joining a specific room (optional, based on your use case)
     socket.on("joinRoom", (profileId) => {
       socket.join(profileId);
-      console.log(`User with profileId ${profileId} joined room.`);
     });
 
     // Handle disconnection and clean up mapping
     socket.on("disconnect", () => {
-      console.log(`Socket disconnected: ${socket.id}`);
 
       // Remove the socket from the user's entry in the Map
       for (const [profileId, sockets] of userSockets.entries()) {
@@ -76,7 +72,6 @@ const getSocketInstance = () => {
 const emitToUser = (profileId, event, data) => {
   const sockets = getSocketByUserId(profileId);
   if (sockets) {
-    console.log("Emiting socket event to user", profileId)
     const io = getSocketInstance();
     sockets.forEach((socketId) => {
       io.to(socketId).emit(event, data);

@@ -31,7 +31,7 @@ const MessageSchema = new mongoose.Schema(
     },
     messageType: {
       type: String,
-      enum: ["text", "image", "gif", "system"], // Explicit message types
+      enum: ["text", "image", "gif", "system"], 
       default: "text",
     },
   },

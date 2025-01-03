@@ -5,7 +5,6 @@ const User = require('../models/userSchema.cjs')
   passport.deserializeUser(async (id, done) => {
     try {
       const user = await User.findById(id);
-      // console.log('user deserialized')
       done(null, user);
     } catch (error) {
       console.error(error);
