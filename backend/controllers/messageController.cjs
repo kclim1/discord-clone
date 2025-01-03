@@ -61,7 +61,6 @@ exports.sendFriendRequest = async (req, res) => {
       profilePic: receiver.profilePic, // Receiver's profile picture
       status: "pending", // Request status
     });
-    console.log(`${receiverId} received a friend request from ${senderId}`);
     await receiver.save();
     await sender.save();
 
@@ -110,7 +109,6 @@ exports.acceptFriendRequest = async (req, res) => {
     const friendRequest = receiver.friends[0];
     const { senderId, receiverId } = friendRequest;
 
-    console.log(`Found friend request: ${JSON.stringify(friendRequest)}`);
 
     // Step 2: Update the receiver's friend object
     const updateReceiver = await User.updateOne(
@@ -139,9 +137,7 @@ exports.acceptFriendRequest = async (req, res) => {
         .json({ message: "Failed to update sender's friend status." });
     }
 
-    console.log(
-      `Friend request ${friendId} accepted for both sender and receiver.`
-    );
+
 
     // Step 4: Emit real-time updates to both users
     emitToUser(senderId, "friendRequestAccepted", {
@@ -193,7 +189,6 @@ exports.rejectFriendRequest = async (req, res) => {
     const friendRequest = receiver.friends[0];
     const { senderId, receiverId } = friendRequest;
 
-    console.log(`Found friend request to reject: ${friendRequest}`);
 
     // Step 2: Remove the friend request from the receiver's `friends` array
     const updateReceiver = await User.updateOne(
@@ -223,9 +218,7 @@ exports.rejectFriendRequest = async (req, res) => {
         .json({ message: "Failed to update sender's friend list." });
     }
 
-    console.log(
-      `Friend request ${friendId} rejected and removed for both sender and receiver.`
-    );
+   
 
     // Step 4: Respond with success
     res.status(200).json({
@@ -245,7 +238,6 @@ exports.createNewChat = async (req, res) => {
     const profileId = req.params.profileId; // The user initiating the chat
     const { participants } = req.body;
 
-    console.log("this is the req body", req.body);
 
     // Validation: Ensure there are at least two participants
     if (participants.length < 2) {
@@ -278,13 +270,10 @@ exports.createNewChat = async (req, res) => {
       chatId,
       participants,
     });
-
-    console.log("this is the createchat backend", chat);
     await chat.save();
 
     participants.forEach((participantId) => {
       emitToUser(participantId, "newChatCreated", { chat });
-      console.log(`Emitting newChatCreated to participantId: ${participantId}`);
     });
 
     return res.status(201).json({ chat, participants });
@@ -401,10 +390,6 @@ exports.getAllMessages = async (req, res) => {
       })
     );
 
-    console.log(
-      "get all messages with sender details",
-      messagesWithSenderDetails
-    );
     res.status(200).json({ allMessages: messagesWithSenderDetails });
   } catch (error) {
     console.error("Error fetching messages:", error);

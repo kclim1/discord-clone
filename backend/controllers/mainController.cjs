@@ -14,7 +14,6 @@ exports.signup = async (req, res) => {
     const { username, password, firstName, lastName } = req.body;
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      console.log("User already exists. Please log in.");
       return res
         .status(400)
         .json({ message: "User already exists. Please log in." });
@@ -38,7 +37,6 @@ exports.signup = async (req, res) => {
     return res.status(201).json({ user: createdUser });
   } catch (error) {
     console.error(error);
-    console.log("Signup failed");
     return res
       .status(500)
       .json({ message: "Signup failed. Please try again." });
@@ -66,9 +64,7 @@ exports.updateProfile = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    console.log('updated user backedn' , updatedUser)
     res.status(200).json(updatedUser);
-    console.log("update complete");
   } catch (error) {
     console.error("Error updating profile:", error);
     res.status(500).json({ message: "Failed to update profile" });
@@ -87,9 +83,7 @@ exports.logout = (req, res, next) => {
         console.error("Error destroying session:", err);
         return next(err);
       }
-      // console.log("req body", req.body);
       res.clearCookie("connect.sid");
-      // console.log("Successful logout");
       res.status(200).json({ message: "logout succesful" });
     });
   });
@@ -100,7 +94,6 @@ exports.getProfile = async (req, res) => {
     const profileId = req.params.profileId;
     const profile = await User.findOne({ profileId });
     if (profile) {
-      // console.log("user found via profile id ", profile);
       return res.json(profile);
     }
     return res.status(400).json({ message: "profile not found" });

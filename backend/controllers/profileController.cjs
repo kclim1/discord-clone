@@ -53,7 +53,6 @@ exports.getFriends = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
-    console.log('user friends backend :',user.friends)
     return res.status(200).json(user.friends);
   } catch (error) {
     console.error("Error fetching friends:", error);
@@ -87,7 +86,6 @@ exports.getFriends = async (req, res) => {
       if (!friend) {
         return res.status(404).json({ message: "Friend not found in this user's friend list." });
       }
-      console.log('this is getfriendbyid',friend)
       return res.status(200).json(friend);
     } catch (error) {
       console.error("Error fetching friend by ID:", error);
