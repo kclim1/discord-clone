@@ -15,7 +15,7 @@ export const AcceptFriendButton =  ()=>{
                 senderId, 
                 status: "accepted" 
             };
-            const acceptFriend = await axios.patch(`http://localhost:3000/friends/${profileId}`, payload);
+            const acceptFriend = await axios.patch(`${import.meta.env.VITE_BACKEND_ROUTE}/friends/${profileId}`, payload);
             console.log('this is accept friend',acceptFriend)
             if (acceptFriend.status === 200) {
                 showSuccessToast('Friend Added !!');
@@ -36,4 +36,3 @@ export const AcceptFriendButton =  ()=>{
     
 }
 
-// router.patch('/friends/:profileId',chatController.acceptFriendRequest)

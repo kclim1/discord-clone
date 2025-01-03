@@ -39,8 +39,11 @@ exports.sendFriendRequest = async (req, res) => {
 
     // Check if a pending request or friendship already exists
     const requestExists = receiver.friends.some(
-      (friend) => friend.senderId === senderId && friend.status === "pending"
-    );
+      (friend) => 
+          (friend.senderId === senderId && friend.status === "pending") ||
+          (friend.senderId === senderId && friend.status === "accepted")
+  );
+  
 
     if (requestExists) {
       return res.status(400).json({ message: "Friend request already sent." });

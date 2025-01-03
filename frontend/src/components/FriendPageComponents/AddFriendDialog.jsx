@@ -16,10 +16,10 @@ import { useFriendsStore } from "../../../store/useFriendsStore";
 export const AddFriendDialog = () => {
   const { setSenderId } = useFriendsStore(); // Zustand store for sender ID
   const { profileId } = useParams(); // Current user's profile ID from URL
-  const [open, setOpen] = useState(false); // Dialog state
+  const [open, setOpen] = useState(false); 
   const [receiverId, setReceiverId] = useState(""); // Input for friend's profile ID
   const { user } = useProfileStore(); // Fetch user details from Zustand
-  const { username, profilePic } = user; // Extract username and profilePic
+  const { username, profilePic } = user; 
 
   // Open the dialog
   const handleOpen = () => setOpen(true);
@@ -47,11 +47,11 @@ export const AddFriendDialog = () => {
         profilePic,
       });
       // Send friend request to backend
-      const response = await axios.post(`http://localhost:3000/friend-requests/${profileId}`, {
-        senderId, // Sender's profile ID
-        receiverId, // Receiver's profile ID from input
-        username, // Sender's username
-        profilePic, // Sender's profile picture
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_ROUTE}/friend-requests/${profileId}`, {
+        senderId, 
+        receiverId,
+        username, 
+        profilePic, 
       });
       console.log(response);
       // Show a success toast if the request is successful

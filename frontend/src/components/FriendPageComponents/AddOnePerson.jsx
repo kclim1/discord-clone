@@ -20,7 +20,7 @@ export const AddOnePerson = () => {
       const participants = [friendId, profileId];
       console.log("Sending to backend:", participants);
 
-      const response = await axios.post("http://localhost:3000/new-chat", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_ROUTE}/new-chat`, {
         participants,
       });
       const newFriendRequest = response.data;

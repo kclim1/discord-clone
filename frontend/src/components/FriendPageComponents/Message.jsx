@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 export const Message = ({ message }) => {
-    const { senderId, profilePic, username, text, createdAt } = message;
+    const {  profilePic, username, text, createdAt } = message;
   
     return (
       <div className="message flex items-start mb-4">

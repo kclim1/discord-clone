@@ -7,7 +7,11 @@ export const LogoutButton = () => {
   const handleLogout = async () => {
     try {
         //with credentials is a specific  property required by axios and browser 
-      const response = await axios.post("http://localhost:3000/auth/logout", {}, { withCredentials: true });
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_ROUTE}/auth/logout`,
+          {}, 
+          { withCredentials: true }
+      );
 
       if (response.status === 200) {
         console.log(response.data.message); 

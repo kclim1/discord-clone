@@ -42,7 +42,7 @@ export const AutoCompleteComponent = () => {
       console.log("Sending participants to backend:", participants);
 
       // POST the participants to your backend
-      const response = await axios.post("http://localhost:3000/new-chat", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_ROUTE}/new-chat`, {
         participants,
       });
 
