@@ -7,7 +7,7 @@ const userSockets = new Map(); // Map<profileId, Set<socketId>>
 const initializeSocket = (server) => {
   io = socketIo(server, {
     cors: {
-      origin: "http://localhost:5173", // Update to match your frontend URL
+      origin: `${process.env.FRONTEND_ROUTE}`, // Update to match your frontend URL
       methods: ["GET", "POST"],
     },
   });
