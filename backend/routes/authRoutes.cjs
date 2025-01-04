@@ -72,7 +72,7 @@ router.post("/signup", formValidator, mainController.signup);
 
 // router.get('/profile',isAuthenticated , mainController.getProfile)
 // /Dashboard/profilepage  => handle in frontend
-router.get("/user/:profileId", mainController.getProfile);
+router.get("/user/:profileId", mainController.getProfile);  //same resources as below. change to dahsboard 
 router.put("/dashboard/:profileid", mainController.updateProfile);
 router.post("/auth/logout", mainController.logout);
 router.get("/auth/session", mainController.checkSession);
