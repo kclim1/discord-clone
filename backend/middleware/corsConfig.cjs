@@ -1,10 +1,7 @@
 const cors = require('cors');
 
-const PORT = process.env.PORT || 3000;
-const FRONTEND_ROUTE = "http://localhost:" + PORT
-
 const corsOptions = {
-  origin: `${FRONTEND_ROUTE}`,
+  origin: `${process.env.BASE_URL}`,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 };

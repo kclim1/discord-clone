@@ -1,8 +1,5 @@
 const socketIo = require("socket.io");
 
-const PORT = process.env.PORT || 3000;
-const FRONTEND_ROUTE = "http://localhost:" + PORT
-
 let io; // Declare io as undefined initially
 const userSockets = new Map(); // Map<profileId, Set<socketId>>
 
@@ -10,7 +7,7 @@ const userSockets = new Map(); // Map<profileId, Set<socketId>>
 const initializeSocket = (server) => {
   io = socketIo(server, {
     cors: {
-      origin: `${FRONTEND_ROUTE}`, 
+      origin: `${process.env.BASE_URL}`, 
       methods: ["GET", "POST"],
     },
   });
