@@ -116,7 +116,7 @@ Initiates Google OAuth login.
 Handles the callback from Google OAuth after user consent.
 
 - **Description:** Authenticates the user and redirects to the dashboard if successful.
-- **On Success:** Redirects to `http://localhost:5173/dashboard/:profileId`
+- **On Success:** Redirects to `/dashboard/:profileId`
 - **On Failure:** Returns `401 Unauthorized` with `{ message: "Google login failed" }`
 
 ---
@@ -132,7 +132,7 @@ Initiates GitHub OAuth login.
 Handles the callback from GitHub OAuth after user consent.
 
 - **Description:** Authenticates the user and redirects to the dashboard if successful.
-- **On Success:** Redirects to `http://localhost:5173/dashboard/:profileId`
+- **On Success:** Redirects to `/dashboard/:profileId`
 - **On Failure:** Returns `401 Unauthorized` with `{ message: "GitHub login failed" }`
 
 ---
@@ -142,7 +142,7 @@ Handles the callback from GitHub OAuth after user consent.
 Handles local login using username and password.
 
 - **Description:** Authenticates the user locally and redirects to the dashboard if successful.
-- **On Success:** Redirects to `http://localhost:5173/dashboard/:profileId`
+- **On Success:** Redirects to `/dashboard/:profileId`
 - **On Failure:** Returns `401 Unauthorized` with `{ message: "Login failed" }`
 
 ---
@@ -432,7 +432,7 @@ Decline a friend request.
 - **Error Handling:** All routes include error handling with proper status codes and messages.
 - **Data Validation:** Inputs are validated at the controller level.
 - **Real-Time Integration:** Messaging and chat creation support real-time updates through Socket.IO.
-- **Redirect URLs:** The application redirects authenticated users to `http://localhost:5173/dashboard/:profileId`.
+- **Redirect URLs:** The application redirects authenticated users to `/dashboard/:profileId`.
 - **Error Handling:** Proper error messages are returned in case of failure for all routes.
 - **Session Management:** Sessions are managed using `passport`.
 

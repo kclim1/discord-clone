@@ -22,7 +22,7 @@ describe('fetchChat', () => {
     const profileId = 'mockProfileId';
     const chats = await fetchChat(profileId);
 
-    expect(axios.get).toHaveBeenCalledWith(`http://localhost:3000/chats/${profileId}`);
+    expect(axios.get).toHaveBeenCalledWith(`${import.meta.env.VITE_BACKEND_ROUTE}/chats/${profileId}`);
     expect(chats).toEqual(mockResponse.data);
   });
 
@@ -33,6 +33,6 @@ describe('fetchChat', () => {
 
     await expect(fetchChat(profileId)).rejects.toThrow('Failed to fetch chats. Please try again.');
 
-    expect(axios.get).toHaveBeenCalledWith(`http://localhost:3000/chats/${profileId}`);
+    expect(axios.get).toHaveBeenCalledWith(`${import.meta.env.VITE_BACKEND_ROUTE}/chats/${profileId}`);
   });
 });

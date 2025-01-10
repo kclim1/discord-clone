@@ -2,7 +2,7 @@ import axios from "axios";
  
 export const fetchChat = async (profileId) => {
   try {
-    const response = await axios.get(`http://localhost:3000/chats/${profileId}`);
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_ROUTE}/chats/${profileId}`);
     console.log('this is fetchChat response ',response.data)
     if(response.data )
     return response.data; // Return the fetched chat data

@@ -100,7 +100,7 @@ export const FriendPage = () => {
   const handleAccept = async (friendId) => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/friends/${profileId}`,
+        `${import.meta.env.VITE_BACKEND_ROUTE}/friends/${profileId}`,
         {
           friendId,
         }

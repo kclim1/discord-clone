@@ -8,7 +8,7 @@ export const fetchProfile = async (profileId) => {
   try {
     setLoading(true); 
     console.log('fetching data...')
-    const response = await axios.get(`http://localhost:3000/user/${profileId}`);
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_ROUTE}/user/${profileId}`);
     if (response.status === 200) {
       const { username, email, profilePic , profileId } = response.data;
       setUser({

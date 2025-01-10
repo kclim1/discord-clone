@@ -26,7 +26,7 @@ export const UpdateProfileForm = () => {
     
         // Send a PUT request to update the user's profile
         const response = await axios.put(
-          `http://localhost:3000/dashboard/${user.profileId}`,
+          `${import.meta.env.VITE_BACKEND_ROUTE}/dashboard/${user.profileId}`,
           { username, email, password, profilePic , profileId} 
         );
         console.log('updated profile',response)

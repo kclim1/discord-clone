@@ -25,7 +25,7 @@ export const SignupForm = function () {
   const handleSignup = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/signup", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_ROUTE}/signup`, {
         username,
         password,
         firstName,
@@ -33,7 +33,7 @@ export const SignupForm = function () {
       });
 
       const { user } = response.data;
-      window.location.href = `http://localhost:5173/dashboard/${user.profileId}`;
+      window.location.href = `${import.meta.env.VITE_FRONTEND_ROUTE}/${user.profileId}`;
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setErrors(error.response.data.errors);

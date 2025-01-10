@@ -26,7 +26,7 @@ export const LoginForm = function () {
     event.preventDefault();
     try {
       setIsLoading(true)
-      const response = await axios.post("http://localhost:3000/auth/login", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_ROUTE}/auth/login`, {
         username,
         password,
       });

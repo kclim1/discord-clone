@@ -26,7 +26,7 @@ describe('fetchOneFriend', () => {
     const friendId = 'mockFriendId'; // Simulate a friend ID
     const friend = await fetchOneFriend(profileId, friendId); // Call the function being tested
 
-    expect(axios.get).toHaveBeenCalledWith(`http://localhost:3000/profiles/${profileId}/friends/${friendId}`);
+    expect(axios.get).toHaveBeenCalledWith(`${import.meta.env.VITE_BACKEND_ROUTE}/profiles/${profileId}/friends/${friendId}`);
     // Assert that axios.get was called with the correct endpoint
 
     expect(friend).toEqual(mockResponse.data);
@@ -43,7 +43,7 @@ describe('fetchOneFriend', () => {
     await expect(fetchOneFriend(profileId, friendId)).rejects.toThrow(mockError);
     // Assert that the function throws the error from axios.get
 
-    expect(axios.get).toHaveBeenCalledWith(`http://localhost:3000/profiles/${profileId}/friends/${friendId}`);
+    expect(axios.get).toHaveBeenCalledWith(`${import.meta.env.VITE_BACKEND_ROUTE}/profiles/${profileId}/friends/${friendId}`);
     // Assert that axios.get was called with the correct endpoint
   });
 });

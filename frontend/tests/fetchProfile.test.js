@@ -40,7 +40,7 @@ describe('fetchProfile', () => {
     await fetchProfile(profileId);
 
     expect(mockSetLoading).toHaveBeenCalledWith(true);
-    expect(axios.get).toHaveBeenCalledWith(`http://localhost:3000/user/${profileId}`);
+    expect(axios.get).toHaveBeenCalledWith(`${import.meta.env.VITE_BACKEND_ROUTE}/user/${profileId}`);
     expect(mockSetUser).toHaveBeenCalledWith({
       username: 'mockUser',
       email: 'mockEmail@example.com',
@@ -58,7 +58,7 @@ describe('fetchProfile', () => {
     await fetchProfile(profileId);
 
     expect(mockSetLoading).toHaveBeenCalledWith(true);
-    expect(axios.get).toHaveBeenCalledWith(`http://localhost:3000/user/${profileId}`);
+    expect(axios.get).toHaveBeenCalledWith(`${import.meta.env.VITE_BACKEND_ROUTE}/user/${profileId}`);
     expect(mockSetUser).not.toHaveBeenCalled();
     expect(mockSetLoading).toHaveBeenCalledWith(false);
   });
