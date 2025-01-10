@@ -2,7 +2,7 @@ const User = require("../models/userSchema.cjs");
 const axios = require("axios");
 const { getSocketByUserId, emitToUser } = require("../socket.cjs");
 const crypto = require("crypto");
-const SoloChat = require("../models/solochatschema.cjs");
+const SoloChat = require("../models/soloChatSchema.cjs");
 const Message = require("../models/messageSchema.cjs");
 
 const validateUser = async (profileId) => {
