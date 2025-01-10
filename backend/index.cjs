@@ -59,9 +59,4 @@ server.listen(port, () => {
 });
 
 
-
-app.get("/health", (req, res) => {
-  res.json({ message: "OK" });
-});
-
 module.exports = { server , app}; 

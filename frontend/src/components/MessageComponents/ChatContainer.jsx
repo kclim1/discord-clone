@@ -14,7 +14,7 @@ export const ChatContainer = () => {
     const fetchMessages = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_ROUTE}/${chatId}`,
+         `${import.meta.env.VITE_BACKEND_ROUTE}/messages/${chatId}`,
           {
             headers: { profileId }, // Pass the profileId in the headers
           }
@@ -60,7 +60,7 @@ export const ChatContainer = () => {
       <div className="chat-messages flex-grow px-7 py-2 overflow-y-auto">
         {messages && messages.length > 0 ? (
           messages.map((message) => (
-            <div key={message._id} className="message flex items-start mb-4">
+            <div key={message.id} className="message flex items-start mb-4">
               {/* Display Sender's Profile Picture */}
               <img
                 src={message.sender?.profilePic || "/avatar.png"} // Use `sender` field in the message
