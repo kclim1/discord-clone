@@ -10,7 +10,6 @@ const bcryptjs = require("bcryptjs");
 const mongooseConnect = require("./models/mongooseConnect.cjs");
 const mongoose = require("mongoose");
 const User = require("./models/userSchema.cjs");
-const port = 3000;
 const passport = require("passport");
 const sessionMiddleware = require("./middleware/sessionMiddleware.cjs");
 const serializeUser = require("./passport/serializeUser.cjs");
@@ -24,6 +23,8 @@ const messageRoutes = require("./routes/messageRoutes.cjs");
 const profileRouter = require('./routes/profileRouter.cjs');
 
 const server = http.createServer(app);
+
+const PORT = process.env.PORT || 3000;
 
 // Connect mongoose
 mongooseConnect();
@@ -54,9 +55,18 @@ app.use('/profiles', profileRouter);
 // Initialize Socket.IO
 initializeSocket(server);
 
-server.listen(port, () => {
-  console.log(`Servers running on port ${port}`);
+// Serve front-end static files here
+app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
+
+// What happens when the public tries to access https://discord-clone-1-m1dy.onrender.com/
+// This assumes /frontend has been built already
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
+})
+
+server.listen(PORT, () => {
+  console.log(`Servers running on port ${PORT}`);
 });
 
 
-module.exports = { server , app}; 
+module.exports = {server , app}; 

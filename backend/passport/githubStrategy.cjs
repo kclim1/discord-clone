@@ -2,6 +2,9 @@ const passport = require("passport");
 const GitHubStrategy = require("passport-github2");
 const User = require("../models/userSchema.cjs");
 const axios = require("axios");
+const PORT = process.env.PORT || 3000;
+const BACKEND_ROUTE = "http://localhost:" + PORT
+
 require("dotenv").config()
 
 const githubStrategy = () => {
@@ -10,7 +13,7 @@ const githubStrategy = () => {
       {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: `${process.env.BACKEND_ROUTE}/auth/github/callback`,
+        callbackURL: `${BACKEND_ROUTE}/auth/github/callback`,
         scope: ["user:email"],
       },
       async function (accessToken, refreshToken, profile, cb) {

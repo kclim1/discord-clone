@@ -1,6 +1,8 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20");
 const User = require("../models/userSchema.cjs");
+const PORT = process.env.PORT || 3000;
+const BACKEND_ROUTE = "http://localhost:" + PORT
 require("dotenv").config();
 
 const googleStrategy = () => {
@@ -9,7 +11,7 @@ const googleStrategy = () => {
       {
         clientID: process.env.GOOGLE_CLIENTID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${process.env.BACKEND_ROUTE}/auth/google/callback`,
+        callbackURL: `${BACKEND_ROUTE}/auth/google/callback`,
       },
       async (accessToken, refreshToken, profile, cb) => {
         try {

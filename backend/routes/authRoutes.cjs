@@ -4,6 +4,9 @@ const router = express.Router();
 const mainController = require("../controllers/mainController.cjs");
 const { formValidator } = require("../validators/formvalidator");
 const isAuthenticated = require("../middleware/isAuthenticated.cjs");
+const PORT = process.env.PORT || 3000;
+const FRONTEND_ROUTE_DASHBOARD = "http://localhost:" + PORT + "/dashboard"
+
 require("dotenv").config();
 
 //google routes start
@@ -17,7 +20,7 @@ router.get(
   passport.authenticate("google", { session: true }), // Only authenticate here
   (req, res) => {
     if (req.user) {
-      res.redirect(`${process.env.FRONTEND_ROUTE_DASHBOARD}/${req.user.profileId}`);
+      res.redirect(`${FRONTEND_ROUTE_DASHBOARD}/${req.user.profileId}`);
     } else {
       return res.status(401).json({ message: "Google login failed" });
     }
@@ -38,7 +41,7 @@ router.get(
   (req, res) => {
     if (req.user) {
       // console.log('github login success')
-      res.redirect(`${process.env.FRONTEND_ROUTE_DASHBOARD}/${req.user.profileId}`);
+      res.redirect(`${FRONTEND_ROUTE_DASHBOARD}/${req.user.profileId}`);
       // return res.status(200).json({message:"github login successful"})
     } else {
       // console.log('github login success')
@@ -57,7 +60,7 @@ router.post(
   passport.authenticate("local", { failureRedirect: false }),
   (req, res) => {
     console.log("local strat success");
-    res.redirect(`${process.env.FRONTEND_ROUTE_DASHBOARD}/${req.user.profileId}`);
+    res.redirect(`${FRONTEND_ROUTE_DASHBOARD}/${req.user.profileId}`);
     // return res.status(200).json({ message: 'Local login successful' });
   },
   (err, req, res, next) => {
