@@ -70,11 +70,11 @@ The primary motivation behind building this clone is to gain a deeper understand
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/chord.git
+    git clone https://github.com/kclim1/discord-clone.git
     ```
 2. Navigate to the project directory:
     ```sh
-    cd chord
+    cd discord-clone
     ```
 3. Install dependencies for both frontend and backend:
     ```sh
