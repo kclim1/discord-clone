@@ -1,6 +1,6 @@
 // controllers/messageController.cjs
 const User = require("../models/userSchema.cjs");
-const SoloChat = require('../models/solochatschema.cjs');
+const SoloChat = require('../models/soloChatSchema.cjs');
 const crypto = require("crypto");
 const { emitToUser } = require("../socket.cjs");
 
