@@ -1,7 +1,7 @@
 const User = require("../models/userSchema.cjs");
 const bcryptjs = require("bcryptjs");
 const mongoose = require("mongoose");
-const formValidator = require("../validators/formvalidator");
+const formValidator = require("../validators/formValidator");
 const { validationResult } = require("express-validator");
 
 exports.signup = async (req, res) => {

@@ -56,12 +56,12 @@ app.use('/profiles', profileRouter);
 initializeSocket(server);
 
 // Serve front-end static files here
-app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
+app.use(express.static(path.join(__dirname, "frontend-dist")));
 
 // What happens when the public tries to access https://discord-clone-1-m1dy.onrender.com/
-// This assumes /frontend has been built already
+// This assumes /frontend-dist has been copied from the frontend dir into the backend dir
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "frontend-dist", "index.html"));
 })
 
 server.listen(PORT, () => {

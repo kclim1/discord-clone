@@ -1,0 +1,8 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "3000:3000"  # Map backend container's port 5000 to host's port 5000
+    environment:
+      - NODE_ENV=production
+    restart: always

@@ -2,7 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 const mainController = require("../controllers/mainController.cjs");
-const { formValidator } = require("../validators/formvalidator");
+const { formValidator } = require("../validators/formValidator");
 const isAuthenticated = require("../middleware/isAuthenticated.cjs");
 
 require("dotenv").config();
