@@ -10,13 +10,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "concurrently": "^9.1.0",
-    "vitest": "^0.0.0"
-  },
-  "dependencies": {
-    "passport-github2": "^0.1.12",
-    "prop-types": "^15.8.1"
-  }
+  "license": "ISC"
 }

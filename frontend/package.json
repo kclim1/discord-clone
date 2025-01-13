@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
-    "start": "vite --host",
-    "build": "vite build",
+    "start": "vite",
+    "build": "vite build && rm -rf frontend-dist && mv dist frontend-dist && rm -rf ../backend/frontend-dist && cp -r frontend-dist ../backend/",
     "lint": "eslint .",
     "preview": "vite preview"
   },
